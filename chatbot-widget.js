@@ -6,7 +6,7 @@
 
     init: function(options) {
       this.apiKey = options.apiKey;
-      this.apiEndpoint = options.apiEndpoint || 'https://api.yourdomain.com/v1';
+      this.apiEndpoint = options.apiEndpoint || 'https://chatbot-cloud-backend.onrender.com/v1';
       this.sessionId = this.generateSessionId();
       
       // Fetch client configuration
