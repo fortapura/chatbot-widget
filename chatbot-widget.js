@@ -39,13 +39,6 @@
       injectStyles: function() {
         const style = document.createElement('style');
         style.textContent = `
-          #chatbot-container {
-            position: fixed;
-            z-index: 1000;
-            transform: none !important;
-            scale: 1 !important;
-          }
-          
           #chat-button {
             position: fixed;
             bottom: 24px;
@@ -57,13 +50,8 @@
             box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
             cursor: pointer;
             z-index: 1000;
-            width: 60px !important;
-            height: 60px !important;
-            min-width: 60px !important;
-            min-height: 60px !important;
-            max-width: 60px !important;
-            max-height: 60px !important;
-            box-sizing: border-box;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -222,10 +210,8 @@
   }
   
   #chat-button svg {
-      width: 24px !important;
-      height: 24px !important;
-      min-width: 24px !important;
-      min-height: 24px !important;
+      width: 24px;
+      height: 24px;
       flex-shrink: 0;
   }
   
@@ -629,12 +615,8 @@
       #chat-button {
           bottom: 16px;
           right: 16px;
-          width: 56px !important;
-          height: 56px !important;
-          min-width: 56px !important;
-          min-height: 56px !important;
-          max-width: 56px !important;
-          max-height: 56px !important;
+          width: 56px;
+          height: 56px;
           font-size: 20px;
       }
   
@@ -729,38 +711,22 @@
         container.id = 'chatbot-container';
         container.innerHTML = `
           <div id="chat-button" onclick="toggleChat()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            <path d="M8 10h.01"></path>
-            <path d="M12 10h.01"></path>
-            <path d="M16 10h.01"></path>
-          </svg>
+          <i class="fas fa-comment-dots"></i>
       </div>
       <div id="chat-container" style="display: none;">
           <div id="chat-header">
               <div class="header-actions-left">
                   <button id="menu-btn" class="header-btn" title="More Options">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="5" r="1"></circle>
-                        <circle cx="12" cy="12" r="1"></circle>
-                        <circle cx="12" cy="19" r="1"></circle>
-                      </svg>
+                      <i class="fas fa-ellipsis-v"></i>
                   </button>
                   <button id="back-btn" class="header-btn back-btn" style="display: none;" onclick="showSection('welcome')" title="Back to Welcome">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                      </svg>
+                      <i class="fas fa-arrow-left"></i>
                   </button>
               </div>
               <div class="chat-title" id="chat-title">Chat with Alex</div>
               <div class="header-actions-right">
                   <button id="reset-btn" class="header-btn reset-btn" onclick="resetChat()" title="Reset Chat">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <polyline points="1 20 1 14 7 14"></polyline>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                      </svg>
+                      <i class="fas fa-sync-alt"></i>
                   </button>
               </div>
           </div>
@@ -773,25 +739,14 @@
       <!-- NEW: Menu Dropdown (positioned dynamically by JS) -->
       <div id="menu-dropdown" class="menu-dropdown">
           <a href="#" class="menu-item" onclick="showSection('report-issue'); toggleMenu(); return false;" title="Report Issue">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                <line x1="12" y1="9" x2="12" y2="13"></line>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>Report Issue
+              <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>Report Issue
           </a>
           <a href="#" class="menu-item" onclick="showSection('find-out-more'); toggleMenu(); return false;" title="Find Out More">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>Find Out More
+              <i class="fas fa-info-circle" style="margin-right: 8px;"></i>Find Out More
           </a>
           <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0;">
           <a href="#" class="menu-item" onclick="toggleChat(); return false;" title="Close Chat">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>Close Chat
+              <i class="fas fa-times" style="margin-right: 8px;"></i>Close Chat
           </a>
       </div>
       <div id="chat-bubble" style="display: none;">Try me!</div>
@@ -806,6 +761,129 @@
                 toggleMenu();
             });
         }
+        
+        // Check if Font Awesome loaded and fallback to SVG if needed
+        this.checkFontAwesomeAndFallback();
+      },
+      
+      // Check if Font Awesome loaded, fallback to SVG if not
+      checkFontAwesomeAndFallback: function() {
+        // Wait a bit for Font Awesome to potentially load
+        setTimeout(() => {
+          // Method 1: Check if Font Awesome stylesheet is loaded
+          let fontAwesomeStylesheet = false;
+          try {
+            fontAwesomeStylesheet = Array.from(document.styleSheets).some(sheet => {
+              try {
+                return sheet.href && (
+                  sheet.href.includes('font-awesome') || 
+                  sheet.href.includes('fontawesome') ||
+                  sheet.href.includes('all.min.css')
+                );
+              } catch (e) {
+                return false;
+              }
+            });
+          } catch (e) {
+            // Cross-origin stylesheet access might fail, continue with other checks
+          }
+          
+          // Method 2: Check if icon actually renders by testing with a hidden element
+          const testIcon = document.createElement('i');
+          testIcon.className = 'fas fa-comment-dots';
+          testIcon.style.position = 'absolute';
+          testIcon.style.visibility = 'hidden';
+          testIcon.style.fontSize = '16px';
+          testIcon.style.left = '-9999px';
+          testIcon.style.top = '-9999px';
+          document.body.appendChild(testIcon);
+          
+          // Force a reflow to ensure styles are applied
+          testIcon.offsetHeight;
+          
+          // Check if the icon has content (Font Awesome icons have content in :before pseudo-element)
+          let isFontAwesomeLoaded = false;
+          try {
+            const beforeStyle = window.getComputedStyle(testIcon, ':before');
+            const content = beforeStyle.getPropertyValue('content');
+            const fontFamily = beforeStyle.getPropertyValue('font-family');
+            
+            // Font Awesome is loaded if:
+            // 1. Stylesheet is found, OR
+            // 2. Content is not empty/none and font-family contains Font Awesome
+            isFontAwesomeLoaded = fontAwesomeStylesheet || (
+              content && 
+              content !== 'none' && 
+              content !== '""' &&
+              content !== '\'\'' &&
+              fontFamily && (
+                fontFamily.includes('Font Awesome') || 
+                fontFamily.includes('FontAwesome')
+              )
+            );
+          } catch (e) {
+            // If we can't check computed styles, assume Font Awesome is loaded if stylesheet exists
+            isFontAwesomeLoaded = fontAwesomeStylesheet;
+          }
+          
+          document.body.removeChild(testIcon);
+          
+          // If Font Awesome didn't load, replace all icons with SVG fallbacks
+          if (!isFontAwesomeLoaded) {
+            this.replaceIconsWithSVG();
+          }
+        }, 500); // Wait 500ms for Font Awesome to load
+      },
+      
+      // Replace Font Awesome icons with SVG fallbacks
+      replaceIconsWithSVG: function() {
+        // Chat button icon
+        const chatButton = document.getElementById('chat-button');
+        if (chatButton) {
+          const icon = chatButton.querySelector('i.fa-comment-dots');
+          if (icon) {
+            icon.outerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M8 10h.01"></path><path d="M12 10h.01"></path><path d="M16 10h.01"></path></svg>';
+          }
+        }
+        
+        // Menu button icon
+        const menuBtn = document.getElementById('menu-btn');
+        if (menuBtn) {
+          const icon = menuBtn.querySelector('i.fa-ellipsis-v');
+          if (icon) {
+            icon.outerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>';
+          }
+        }
+        
+        // Back button icon
+        const backBtn = document.getElementById('back-btn');
+        if (backBtn) {
+          const icon = backBtn.querySelector('i.fa-arrow-left');
+          if (icon) {
+            icon.outerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>';
+          }
+        }
+        
+        // Reset button icon
+        const resetBtn = document.getElementById('reset-btn');
+        if (resetBtn) {
+          const icon = resetBtn.querySelector('i.fa-sync-alt');
+          if (icon) {
+            icon.outerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>';
+          }
+        }
+        
+        // Menu dropdown icons
+        const menuItems = document.querySelectorAll('#menu-dropdown .menu-item i');
+        menuItems.forEach(icon => {
+          if (icon.classList.contains('fa-exclamation-triangle')) {
+            icon.outerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+          } else if (icon.classList.contains('fa-info-circle')) {
+            icon.outerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+          } else if (icon.classList.contains('fa-times')) {
+            icon.outerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+          }
+        });
       }
     };
   
