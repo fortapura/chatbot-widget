@@ -13,6 +13,7 @@
         this.fetchConfig().then(() => {
           this.injectStyles();
           this.injectHTML();
+          this.updateAssistantName();
         });
       },
   
@@ -42,7 +43,7 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: linear-gradient(135deg, color-mix(in srgb, ${this.config.primary_color} 20%, black) 0%, color-mix(in srgb, ${this.config.primary_color} 20%, black) 100%);
+            background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 90%, black) 100%);
             color: white;
             padding: 16px;
             border-radius: 50%;
@@ -145,7 +146,7 @@
       right: 24px;
       width: 360px;
       max-height: 70vh;
-      background: #ffffff;
+      background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
       border-radius: 20px;
       box-shadow: 0 16px 48px color-mix(in srgb, ${this.config.primary_color} 50%, black)33;
       z-index: 1000;
@@ -214,7 +215,7 @@
       border: 1px solid ${this.config.primary_color}66;
       border-radius: 12px;
       min-width: 160px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 12px 32px color-mix(in srgb, ${this.config.secondary_color} 30%, transparent);
       z-index: 1002;
       opacity: 0;
       transform: translateY(-10px) scale(0.95);
@@ -269,9 +270,9 @@
       max-height: 400px;
       overflow-y: auto;
       padding: 20px;
-      background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+      background: white;
       scrollbar-width: thin;
-      scrollbar-color: ${this.config.primary_color} #e2e8f0;
+      scrollbar-color: ${this.config.primary_color} color-mix(in srgb, ${this.config.secondary_color} 10%, white);
   }
 
   #chat-window::-webkit-scrollbar {
@@ -279,7 +280,7 @@
   }
 
   #chat-window::-webkit-scrollbar-track {
-      background: #e2e8f0;
+      background: color-mix(in srgb, ${this.config.secondary_color} 10%, white);
       border-radius: 3px;
   }
 
@@ -292,10 +293,10 @@
       display: flex;
       gap: 12px;
       padding: 20px;
-      border-top: 1px solid #e2e8f0;
-      background: white;
+      border-top: 1px solid color-mix(in srgb, ${this.config.secondary_color} 15%, white);
+      background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
       align-items: flex-end;
-      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 -4px 12px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
   
   #userInput {
@@ -303,7 +304,7 @@
       min-height: 48px;
       max-height: 140px;
       padding: 12px 16px;
-      border: 2px solid #e2e8f0;
+      border: 2px solid color-mix(in srgb, ${this.config.secondary_color} 15%, white);
       border-radius: 24px;
       font-family: inherit;
       font-size: 14px;
@@ -313,7 +314,7 @@
       line-height: 1.5;
       transition: all 0.3s ease;
       box-sizing: border-box;
-      background: #f8f9fa;
+      background: color-mix(in srgb, ${this.config.secondary_color} 3%, white);
   }
   
   #userInput:focus {
@@ -337,9 +338,9 @@
   }
 
   #chat-input-container .btn:hover {
-      background: color-mix(in srgb, ${this.config.primary_color} 90%, black); /* Slightly darker blue on hover for feedback—tweak if needed */
+      background: color-mix(in srgb, ${this.config.primary_color} 90%, black);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 168, 204, 0.3);
+      box-shadow: 0 8px 20px color-mix(in srgb, ${this.config.primary_color} 30%, transparent);
   }
   
   .message {
@@ -371,7 +372,7 @@
   }
 
   .bot {
-      background: #f1f5f9;
+      background: white;
       color: color-mix(in srgb, ${this.config.primary_color} 50%, black);
       align-self: flex-start;
       margin-right: auto;
@@ -379,19 +380,19 @@
       display: flex;
       align-items: flex-start;
       font-weight: 400;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
       overflow: hidden;
       max-width: 85%;
   }
   
   .profile-img {
-      width: 36px;
-      height: 36px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       object-fit: cover;
       margin-right: 10px;
       flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 20%, transparent);
   }
   
   .message-content {
@@ -448,11 +449,11 @@
       max-width: 100%;
       padding: 8px 10px;
       margin-top: 4px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid color-mix(in srgb, ${this.config.secondary_color} 15%, white);
       border-radius: 6px;
       font-family: 'Roboto', sans-serif;
       font-size: 0.85em;
-      background: white;
+      background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
       box-sizing: border-box;
       display: block;
@@ -462,7 +463,7 @@
   .contact-form-widget textarea:focus {
       outline: none;
       border-color: ${this.config.primary_color};
-      box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.1);
+      box-shadow: 0 0 0 3px color-mix(in srgb, ${this.config.primary_color} 10%, transparent);
   }
   
   .contact-form-widget textarea {
@@ -488,7 +489,7 @@
   .contact-form-widget button:hover {
       background: color-mix(in srgb, ${this.config.primary_color} 90%, black);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
+      box-shadow: 0 4px 12px color-mix(in srgb, ${this.config.primary_color} 30%, transparent);
   }
   
   .contact-form-widget .contact-response {
@@ -500,8 +501,8 @@
   }
   
   .typing-indicator {
-      background: #f1f5f9;
-      color: #000000;
+      background: white;
+      color: color-mix(in srgb, ${this.config.secondary_color} 80%, black);
       align-self: flex-start;
       margin-right: auto;
       padding: 14px 18px;
@@ -511,7 +512,7 @@
       display: flex;
       align-items: center;
       border-bottom-left-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
   
   .typing-indicator span {
@@ -519,7 +520,7 @@
       width: 8px;
       height: 8px;
       margin: 0 2px;
-      background: linear-gradient(135deg, #000000 0%, #000000 100%);
+      background: color-mix(in srgb, ${this.config.primary_color} 70%, black);
       border-radius: 50%;
       animation: typing 1.4s infinite ease-in-out;
   }
@@ -538,20 +539,20 @@
   }
   
   .option-btn {
-      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      background: white;
       color: color-mix(in srgb, ${this.config.primary_color} 50%, black);
       padding: 12px 16px;
       margin: 6px 0;
-      border: 1px solid #cbd5e0;
+      border: 1px solid color-mix(in srgb, ${this.config.secondary_color} 20%, white);
       border-radius: 12px;
       cursor: pointer;
-      transition: all 0.5s ease; /* Increased transition duration for less reactivity */
+      transition: all 0.5s ease;
       font-size: 0.9em;
       font-weight: 500;
       display: block;
       width: 90%;
       text-align: left;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
 
   .option-btn:hover {
@@ -563,7 +564,7 @@
   }
 
   .section-response {
-      background: #f8fafc !important;
+      background: white !important;
       border-left: 4px solid ${this.config.primary_color};
       margin-top: 8px !important;
   }
@@ -572,8 +573,8 @@
       position: fixed;
       bottom: 90px;
       right: 50px;
-      background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
-      color: rgb(0, 0, 0);
+      background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
+      color: color-mix(in srgb, ${this.config.secondary_color} 80%, black);
       padding: 12px 20px;
       border-radius: 24px;
       box-shadow: 0 8px 24px ${this.config.primary_color}4d;
@@ -582,7 +583,7 @@
       display: none;
       z-index: 1001;
       animation: bubbleFloat 0.6s ease-in-out;
-      outline: 6px solid #0000 ;
+      outline: 6px solid transparent;
   }
   
   @keyframes bubbleFloat {
@@ -685,6 +686,14 @@
         document.head.appendChild(style);
       },
   
+      updateAssistantName: function() {
+        // Update assistant name in UI after config is loaded
+        const chatTitle = document.getElementById('chat-title');
+        if (chatTitle && this.config && this.config.assistant_name) {
+          chatTitle.textContent = `Chat with ${this.config.assistant_name}`;
+        }
+      },
+
       injectHTML: function() {
         const container = document.createElement('div');
         container.id = 'chatbot-container';
@@ -702,7 +711,7 @@
                       <i class="fas fa-arrow-left"></i>
                   </button>
               </div>
-              <div class="chat-title">Chat with Alex</div>
+              <div class="chat-title" id="chat-title">Chat with Alex</div>
               <div class="header-actions-right">
                   <button id="reset-btn" class="header-btn reset-btn" onclick="resetChat()" title="Reset Chat">
                       <i class="fas fa-sync-alt"></i>
@@ -731,17 +740,22 @@
       <div id="chat-bubble" style="display: none;">Try me!</div>
         `;
         document.body.appendChild(container);
+        
+        // Attach menu button event listener after HTML is injected
+        const menuBtn = document.getElementById('menu-btn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+        }
       }
     };
   
-    // Predefined responses (hardcoded for simplicity, could fetch from backend)
-    const infoResponses = {
-      faq: 'Frequently Asked Questions:<br>- Our FAQ section is covered on the home page of this website.',
-      contact: 'You can reach us at:<br>📧 Email: info@fortapura.com<br>📞 Phone: 07709 536967<br><br>Or type your enquiry here and I can collect your details and send them to our team!',
-      booking: 'Booking Help:<br>- To book a demo: Visit <a href="https://calendly.com/fortapurauk/30min" target="blank">Book a Meeting</a> or call us.',
-      products: 'Product/Services Info:<br>- All of our bots are tailored to your specification with multiple integration options, including email, SMS, booking systems and more.',
-      pricing: 'Pricing:<br>-Each chatbot is unique so pricing can vary based on the complexity and ability you require in your chatbot.'
-    };
+    // Get info responses from config (fallback to empty object if not provided)
+    function getInfoResponses() {
+      return ChatbotWidget.config?.info_responses || {};
+    }
   
     let hasAIInteraction = false;
     // Global variable to track current section
@@ -808,15 +822,6 @@
           }
   });
   
-  // FIXED: Attach menu button event listener (robust, overrides inline if needed)
-  const menuBtn = document.getElementById('menu-btn');
-  if (menuBtn) {
-      menuBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          toggleMenu();
-      });
-  }
-  
   // Enhanced: Smooth scroll to bottom after adding messages
   function scrollToBottom() {
       const chatWindow = document.getElementById('chat-window');
@@ -880,6 +885,16 @@
               chatButton.style.opacity = '0.6';
           }
   
+          // Hide menu and reset buttons during welcome animation
+          const menuBtn = document.getElementById('menu-btn');
+          const resetBtn = document.getElementById('reset-btn');
+          if (menuBtn) {
+              menuBtn.style.display = 'none';
+          }
+          if (resetBtn) {
+              resetBtn.style.display = 'none';
+          }
+
           // Disable input field and send button during welcome animation
           const userInput = document.getElementById('userInput');
           const sendButton = document.querySelector('#chat-input-container .btn');
@@ -895,9 +910,12 @@
           }
   
           // Clear server-side history to start fresh session
-          fetch('/clear_history', {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'}
+          fetch(`${ChatbotWidget.apiEndpoint}/history?session_id=${ChatbotWidget.sessionId}`, {
+              method: 'DELETE',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+              }
           }).catch(error => {
               console.error('Error clearing history:', error);
           });
@@ -906,19 +924,34 @@
           const chatWindow = document.getElementById('chat-window');
           chatWindow.innerHTML = '';  // Clear any lingering content
           currentSection = 'welcome';
+          
+          // Calculate timing based on number of welcome options
+          const welcomeOptions = getWelcomeOptions();
+          const numOptions = welcomeOptions.length;
+          // Timing breakdown: 800ms initial + 300ms after typing + (250ms * numOptions) + 150ms final + 200ms buffer
+          const totalWelcomeTime = 800 + 300 + (250 * numOptions) + 150 + 200;
+          
           showSection('welcome', true);  // Fresh open: clear and build
-  
+
           // Reset textarea height on open
           if (userInput) {
               userInput.style.height = 'auto';
           }
-  
-          // Re-enable after full animation (approx 4s buffer)
+
+          // Re-enable after full animation (dynamically calculated based on welcome options)
           setTimeout(() => {
               isChatProcessing = false;
               if (chatButton) {
                   chatButton.style.pointerEvents = 'auto';
                   chatButton.style.opacity = '1';
+              }
+              
+              // Show menu and reset buttons after welcome is complete
+              if (menuBtn) {
+                  menuBtn.style.display = 'flex';
+              }
+              if (resetBtn) {
+                  resetBtn.style.display = 'flex';
               }
               
               // Re-enable input field and send button
@@ -932,7 +965,7 @@
                   sendButton.style.opacity = '1';
                   sendButton.style.cursor = 'pointer';
               }
-          }, 4000);
+          }, totalWelcomeTime);
       } else {
           // Closing: instant, no processing delay needed
           isChatProcessing = false;
@@ -978,22 +1011,28 @@
       
       if (messages.length === 0) return;  // No content to save
       
-      // Create payload as Blob for sendBeacon
-      const payload = new Blob([JSON.stringify({ session_messages: messages })], { type: 'application/json' });
-      
-      // sendBeacon is reliable even on unload
-      navigator.sendBeacon('/log_history', payload);
+      // Use fetch with keepalive for reliable unload requests (supports headers unlike sendBeacon)
+      fetch(`${ChatbotWidget.apiEndpoint}/log_history`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+          },
+          body: JSON.stringify({ 
+              session_messages: messages,
+              session_id: ChatbotWidget.sessionId
+          }),
+          keepalive: true  // Ensures request completes even on page unload
+      }).catch(error => {
+          console.error('Error logging history on unload:', error);
+      });
       console.log('Session saved on unload');  // Optional debug (may not log if unload is abrupt)
   }
   
-  // Welcome options (static for re-adding on back)
-  const welcomeOptions = [
-      { id: 'faq', text: 'Frequently Asked Questions' },
-      { id: 'contact', text: 'Contact Us' },
-      { id: 'booking', text: 'Booking Help' },
-      { id: 'products', text: 'Products & Services' },
-      { id: 'pricing', text: 'Pricing' }
-  ];
+  // Get welcome options from config (fallback to empty array if not provided)
+  function getWelcomeOptions() {
+    return ChatbotWidget.config?.welcome_options || [];
+  }
   
   // Show specific section
   async function showSection(sectionId, isFresh = false) {
@@ -1013,18 +1052,20 @@
               showTypingIndicator();
               setTimeout(async () => {
                   removeTypingIndicator();
-                  await delay(500);
-                  addBotMessage('Hello! I\'m Alex, your AI assistant. How can I help?');
+                  await delay(300);
+                  const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
+                  addBotMessage(`Hello! I'm ${assistantName}, your AI assistant. How can I help?`);
+                  const welcomeOptions = getWelcomeOptions();
                   for (let option of welcomeOptions) {
-                      await delay(400);
+                      await delay(250);
                       addOptionButton(option.id, option.text);
                   }
-                  await delay(200);
+                  await delay(150);
                   addBotMessage('Or type a request to begin a chat');
                   if (chatWindow) {
                       chatWindow.scrollTop = chatWindow.scrollHeight;
                   }
-              }, 1500);
+              }, 800);
           } else {
               // Back navigation: remove section response if present
               if (chatWindow) {
@@ -1034,7 +1075,9 @@
                   }
                   // Rebuild full welcome if no greeting or buttons (since cleared on section nav)
                   if (!chatWindow.querySelector('.message') || !chatWindow.querySelector('.option-btn')) {
-                      addBotMessage('Hello! I\'m Alex, your AI assistant. How can I help?');
+                      const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
+                      addBotMessage(`Hello! I'm ${assistantName}, your AI assistant. How can I help?`);
+                      const welcomeOptions = getWelcomeOptions();
                       for (let option of welcomeOptions) {
                           addOptionButton(option.id, option.text);
                       }
@@ -1086,7 +1129,13 @@
               chatWindow.innerHTML = '';
           }
           // Remove option buttons (already cleared)
-          addBotMessage(infoResponses[sectionId], true);  // Mark as section response
+          const infoResponses = getInfoResponses();
+          const responseText = infoResponses[sectionId];
+          if (responseText) {
+              addBotMessage(responseText, true);  // Mark as section response
+          } else {
+              addBotMessage('Sorry, this section is not available.', true);
+          }
           if (backBtn) {
               backBtn.style.display = 'block';
           }
@@ -1124,10 +1173,12 @@
       // Convert links to clickable HTML
       const processedText = convertLinksToHTML(text);
       
+      const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
+      const assistantAvatar = ChatbotWidget.config?.assistant_avatar_url || '/static/alex-profile.png';
       botMsg.innerHTML = `
-          <img src="/static/alex-profile.png" alt="Alex Profile Picture" class="profile-img">
+          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="profile-img">
           <div class="message-content">
-              <div class="bot-name">Alex</div>
+              <div class="bot-name">${assistantName}</div>
               ${processedText}
           </div>
       `;
@@ -1163,8 +1214,10 @@
       const typing = document.createElement('div');
       typing.id = 'typing-indicator';
       typing.classList.add('typing-indicator');
+      const assistantAvatar = ChatbotWidget.config?.assistant_avatar_url || '/static/alex-profile.png';
+      const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
       typing.innerHTML = `
-          <img src="/static/alex-profile.png" alt="Alex Profile Picture" class="profile-img">
+          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="profile-img">
           <span></span><span></span><span></span>
       `;
       chatWindow.appendChild(typing);
@@ -1234,12 +1287,18 @@
       // Show typing indicator
       showTypingIndicator();
   
-      // Send to backend with delay simulation
+      // Send to backend with minimal delay for typing effect
       setTimeout(() => {
-          fetch('/chat', {
+          fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
               method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({message: message})
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+              },
+              body: JSON.stringify({
+                  message: message,
+                  session_id: ChatbotWidget.sessionId
+              })
           })
           .then(response => {
               return response.json().then(json => ({
@@ -1259,7 +1318,7 @@
               removeTypingIndicator();
               addBotMessage(error.reply || error.error || 'Sorry, something went wrong. Please try again.');
           });
-      }, 1000);  // 1-second delay for typing effect
+      }, 200);  // Reduced delay for faster response
   
       if (userInput) {
           userInput.value = '';
@@ -1280,10 +1339,20 @@
           const phone = form.querySelector('.contact-phone').value;
           const message = form.querySelector('.contact-message').value;
   
-          fetch('/submit_contact', {
+          fetch(`${ChatbotWidget.apiEndpoint}/contact`, {
               method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({name, business_name, email, phone, message})
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+              },
+              body: JSON.stringify({
+                  name, 
+                  business_name, 
+                  email, 
+                  phone, 
+                  message,
+                  session_id: ChatbotWidget.sessionId
+              })
           })
           .then(response => {
               return response.json().then(json => ({
@@ -1317,9 +1386,12 @@
       }
       
       // Clear server-side history for fresh start
-      fetch('/clear_history', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'}
+      fetch(`${ChatbotWidget.apiEndpoint}/history?session_id=${ChatbotWidget.sessionId}`, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+          }
       }).catch(error => {
           console.error('Error clearing history:', error);
       });
@@ -1342,17 +1414,29 @@
           const message = form.querySelector('.report-message').value;
   
           // Fetch current chat history from backend
-          fetch('/get_history')
+          fetch(`${ChatbotWidget.apiEndpoint}/history?session_id=${ChatbotWidget.sessionId}`, {
+              headers: {
+                  'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+              }
+          })
               .then(response => response.json())
-              .then(history => {
+              .then(data => {
                   // Format history as a string
+                  const history = data.messages || [];
                   const formattedHistory = history.map(msg => `[${msg.role.toUpperCase()}]: ${msg.content}`).join('\n\n');
-  
+
                   // Send to backend
-                  fetch('/submit_report', {
+                  fetch(`${ChatbotWidget.apiEndpoint}/report`, {
                       method: 'POST',
-                      headers: {'Content-Type': 'application/json'},
-                      body: JSON.stringify({message, history: formattedHistory})
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+                      },
+                      body: JSON.stringify({
+                          message, 
+                          history: formattedHistory,
+                          session_id: ChatbotWidget.sessionId
+                      })
                   })
                   .then(response => {
                       return response.json().then(json => ({
