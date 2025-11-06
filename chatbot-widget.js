@@ -782,10 +782,10 @@
           setInterval(() => {
               if (isChatClosed()) {
                   const chatBubble = document.getElementById('chat-bubble');
-                  if (chatBubble) {
+                  if (chatBubble && chatBubble.style) {
                       chatBubble.style.display = 'block';
                       setTimeout(() => {
-                          if (chatBubble) {
+                          if (chatBubble && chatBubble.style) {
                               chatBubble.style.display = 'none';
                           }
                       }, 5000);  // Show for 5 seconds
@@ -856,7 +856,10 @@
   // Check if chat is closed
   function isChatClosed() {
       const chatContainer = document.getElementById('chat-container');
-      return chatContainer ? chatContainer.style.display === 'none' : true;
+      if (!chatContainer || !chatContainer.style) {
+          return true;
+      }
+      return chatContainer.style.display === 'none';
   }
   
   // UPDATED: Toggle chat window - Fresh start on open, log & clear on close
@@ -865,7 +868,7 @@
       if (isChatProcessing) return;
   
       const chatContainer = document.getElementById('chat-container');
-      if (!chatContainer) return;
+      if (!chatContainer || !chatContainer.style) return;
       
       const isOpening = chatContainer.style.display === 'none';
       chatContainer.style.display = isOpening ? 'block' : 'none';
@@ -950,12 +953,12 @@
               chatWindow.innerHTML = '';  // Reset for next open
           }
           const chatBubble = document.getElementById('chat-bubble');
-          if (chatBubble) {
+          if (chatBubble && chatBubble.style) {
               chatBubble.style.display = 'none';  // Hide bubble if open
           }
           // Close dropdown if open
           const dropdown = document.getElementById('menu-dropdown');
-          if (dropdown) {
+          if (dropdown && dropdown.style) {
               dropdown.style.display = 'none';
               dropdown.classList.remove('show');
           }
@@ -1373,7 +1376,7 @@
   function toggleMenu() {
       const dropdown = document.getElementById('menu-dropdown');
       const menuBtn = document.getElementById('menu-btn');
-      if (!dropdown || !menuBtn) return;
+      if (!dropdown || !menuBtn || !dropdown.style) return;
   
       const isVisible = dropdown.classList.contains('show');
       
@@ -1410,7 +1413,7 @@
       const menuBtn = document.getElementById('menu-btn');
       const dropdown = document.getElementById('menu-dropdown');
       
-      if (dropdown && dropdown.style.display === 'block' && !menuBtn.contains(event.target) && !dropdown.contains(event.target)) {
+      if (dropdown && dropdown.style && dropdown.style.display === 'block' && menuBtn && !menuBtn.contains(event.target) && !dropdown.contains(event.target)) {
           dropdown.style.display = 'none';
           dropdown.classList.remove('show');
           dropdown.style.position = '';
@@ -1424,7 +1427,7 @@
   document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
           const dropdown = document.getElementById('menu-dropdown');
-          if (dropdown && dropdown.style.display === 'block') {
+          if (dropdown && dropdown.style && dropdown.style.display === 'block') {
               dropdown.style.display = 'none';
               dropdown.classList.remove('show');
               dropdown.style.position = '';
