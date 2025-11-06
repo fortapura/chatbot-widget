@@ -767,10 +767,14 @@
                   jumpCounter++;
                   if (jumpCounter % 3 !== 0){
                       const chatButton = document.getElementById('chat-button');
-                      chatButton.classList.add('bouncing');
-                      setTimeout(() => {
-                          chatButton.classList.remove('bouncing');
-                      }, 1600);  // Animation duration - two smooth jumps
+                      if (chatButton) {
+                          chatButton.classList.add('bouncing');
+                          setTimeout(() => {
+                              if (chatButton) {
+                                  chatButton.classList.remove('bouncing');
+                              }
+                          }, 1600);  // Animation duration - two smooth jumps
+                      }
                   }
               }
           }, 12000);  // Every 12 seconds
@@ -778,10 +782,14 @@
           setInterval(() => {
               if (isChatClosed()) {
                   const chatBubble = document.getElementById('chat-bubble');
-                  chatBubble.style.display = 'block';
-                  setTimeout(() => {
-                      chatBubble.style.display = 'none';
-                  }, 5000);  // Show for 5 seconds
+                  if (chatBubble) {
+                      chatBubble.style.display = 'block';
+                      setTimeout(() => {
+                          if (chatBubble) {
+                              chatBubble.style.display = 'none';
+                          }
+                      }, 5000);  // Show for 5 seconds
+                  }
               }
           }, 36000);  // Every 60 seconds
       // UPDATED: Enable Enter key for AI chat (now with textarea support and auto-resize)
@@ -847,7 +855,8 @@
   
   // Check if chat is closed
   function isChatClosed() {
-      return document.getElementById('chat-container').style.display === 'none';
+      const chatContainer = document.getElementById('chat-container');
+      return chatContainer ? chatContainer.style.display === 'none' : true;
   }
   
   // UPDATED: Toggle chat window - Fresh start on open, log & clear on close
@@ -856,21 +865,27 @@
       if (isChatProcessing) return;
   
       const chatContainer = document.getElementById('chat-container');
+      if (!chatContainer) return;
+      
       const isOpening = chatContainer.style.display === 'none';
       chatContainer.style.display = isOpening ? 'block' : 'none';
       if (isOpening) {
           isChatProcessing = true;
           // Disable chat button visually
           const chatButton = document.getElementById('chat-button');
-          chatButton.style.pointerEvents = 'none';
-          chatButton.style.opacity = '0.6';
+          if (chatButton) {
+              chatButton.style.pointerEvents = 'none';
+              chatButton.style.opacity = '0.6';
+          }
   
           // Disable input field and send button during welcome animation
           const userInput = document.getElementById('userInput');
           const sendButton = document.querySelector('#chat-input-container .btn');
-          userInput.disabled = true;
-          userInput.placeholder = 'Please wait...';
-          userInput.style.opacity = '0.6';
+          if (userInput) {
+              userInput.disabled = true;
+              userInput.placeholder = 'Please wait...';
+              userInput.style.opacity = '0.6';
+          }
           if (sendButton) {
               sendButton.disabled = true;
               sendButton.style.opacity = '0.6';
@@ -892,18 +907,24 @@
           showSection('welcome', true);  // Fresh open: clear and build
   
           // Reset textarea height on open
-          userInput.style.height = 'auto';
+          if (userInput) {
+              userInput.style.height = 'auto';
+          }
   
           // Re-enable after full animation (approx 4s buffer)
           setTimeout(() => {
               isChatProcessing = false;
-              chatButton.style.pointerEvents = 'auto';
-              chatButton.style.opacity = '1';
+              if (chatButton) {
+                  chatButton.style.pointerEvents = 'auto';
+                  chatButton.style.opacity = '1';
+              }
               
               // Re-enable input field and send button
-              userInput.disabled = false;
-              userInput.placeholder = 'Ask us anything...';
-              userInput.style.opacity = '1';
+              if (userInput) {
+                  userInput.disabled = false;
+                  userInput.placeholder = 'Ask us anything...';
+                  userInput.style.opacity = '1';
+              }
               if (sendButton) {
                   sendButton.disabled = false;
                   sendButton.style.opacity = '1';
@@ -914,8 +935,10 @@
           // Closing: instant, no processing delay needed
           isChatProcessing = false;
           const chatButton = document.getElementById('chat-button');
-          chatButton.style.pointerEvents = 'auto';
-          chatButton.style.opacity = '1';
+          if (chatButton) {
+              chatButton.style.pointerEvents = 'auto';
+              chatButton.style.opacity = '1';
+          }
   
           // On close: Log current session to server, then clear DOM
           if (hasAIInteraction) {
@@ -923,8 +946,13 @@
           }
           hasAIInteraction = false;
           const chatWindow = document.getElementById('chat-window');
-          chatWindow.innerHTML = '';  // Reset for next open
-          document.getElementById('chat-bubble').style.display = 'none';  // Hide bubble if open
+          if (chatWindow) {
+              chatWindow.innerHTML = '';  // Reset for next open
+          }
+          const chatBubble = document.getElementById('chat-bubble');
+          if (chatBubble) {
+              chatBubble.style.display = 'none';  // Hide bubble if open
+          }
           // Close dropdown if open
           const dropdown = document.getElementById('menu-dropdown');
           if (dropdown) {
@@ -937,6 +965,8 @@
   // UPDATED: Extract and send current session history to server on close (async fetch)
   function saveCurrentSessionToServer() {
       const chatWindow = document.getElementById('chat-window');
+      if (!chatWindow) return;
+      
       const messages = [];
       chatWindow.querySelectorAll('.message').forEach(msg => {
           const role = msg.classList.contains('user') ? 'user' : 'assistant';
@@ -970,10 +1000,14 @@
       const backBtn = document.getElementById('back-btn');
   
       if (sectionId === 'welcome') {
-          backBtn.style.display = 'none';
+          if (backBtn) {
+              backBtn.style.display = 'none';
+          }
           if (isFresh) {
               // Fresh open: clear and build full welcome
-              chatWindow.innerHTML = '';
+              if (chatWindow) {
+                  chatWindow.innerHTML = '';
+              }
               showTypingIndicator();
               setTimeout(async () => {
                   removeTypingIndicator();
@@ -985,33 +1019,45 @@
                   }
                   await delay(200);
                   addBotMessage('Or type a request to begin a chat');
-                  chatWindow.scrollTop = chatWindow.scrollHeight;
+                  if (chatWindow) {
+                      chatWindow.scrollTop = chatWindow.scrollHeight;
+                  }
               }, 1500);
           } else {
               // Back navigation: remove section response if present
-              const sectionMsg = chatWindow.querySelector('.section-response');
-              if (sectionMsg) {
-                  sectionMsg.remove();
-              }
-              // Rebuild full welcome if no greeting or buttons (since cleared on section nav)
-              if (!chatWindow.querySelector('.message') || !chatWindow.querySelector('.option-btn')) {
-                  addBotMessage('Hello! I\'m Alex, your AI assistant. How can I help?');
-                  for (let option of welcomeOptions) {
-                      addOptionButton(option.id, option.text);
+              if (chatWindow) {
+                  const sectionMsg = chatWindow.querySelector('.section-response');
+                  if (sectionMsg) {
+                      sectionMsg.remove();
                   }
-                  addBotMessage('Or type a request to begin a chat');
+                  // Rebuild full welcome if no greeting or buttons (since cleared on section nav)
+                  if (!chatWindow.querySelector('.message') || !chatWindow.querySelector('.option-btn')) {
+                      addBotMessage('Hello! I\'m Alex, your AI assistant. How can I help?');
+                      for (let option of welcomeOptions) {
+                          addOptionButton(option.id, option.text);
+                      }
+                      addBotMessage('Or type a request to begin a chat');
+                  }
+                  chatWindow.scrollTop = chatWindow.scrollHeight;
               }
-              chatWindow.scrollTop = chatWindow.scrollHeight;
           }
       } else if (sectionId === 'ai-chat') {
           // Clear welcome messages and option buttons for AI chat
-          chatWindow.innerHTML = '';
+          if (chatWindow) {
+              chatWindow.innerHTML = '';
+          }
           addBotMessage('How can I assist you today?');
-          backBtn.style.display = 'none';
-          chatWindow.scrollTop = chatWindow.scrollHeight;
+          if (backBtn) {
+              backBtn.style.display = 'none';
+          }
+          if (chatWindow) {
+              chatWindow.scrollTop = chatWindow.scrollHeight;
+          }
       } else if (sectionId === 'report-issue') {
           // Clear window to "open new space"
-          chatWindow.innerHTML = '';
+          if (chatWindow) {
+              chatWindow.innerHTML = '';
+          }
           // Remove option buttons (already cleared)
           addBotMessage(`
               Please describe the issue:<br>
@@ -1022,22 +1068,32 @@
               </form>
           `, true);  // Mark as section response
           submitReportForm();
-          backBtn.style.display = 'block';
-          chatWindow.scrollTop = chatWindow.scrollHeight;
+          if (backBtn) {
+              backBtn.style.display = 'block';
+          }
+          if (chatWindow) {
+              chatWindow.scrollTop = chatWindow.scrollHeight;
+          }
       } else if (sectionId === 'find-out-more') {
           // Handle "Find Out More" - Navigate to about page in same tab
           window.location.href = '/about';
           return;  // No further processing
       } else {
           // Predefined sections (faq, contact, etc.) - "Open new space" by clearing window
-          chatWindow.innerHTML = '';
+          if (chatWindow) {
+              chatWindow.innerHTML = '';
+          }
           // Remove option buttons (already cleared)
           addBotMessage(infoResponses[sectionId], true);  // Mark as section response
-          backBtn.style.display = 'block';
+          if (backBtn) {
+              backBtn.style.display = 'block';
+          }
           if (sectionId === 'contact') {
               submitContactForm();
           }
-          chatWindow.scrollTop = chatWindow.scrollHeight;
+          if (chatWindow) {
+              chatWindow.scrollTop = chatWindow.scrollHeight;
+          }
       }
   }
   
@@ -1055,6 +1111,8 @@
   // Helper to add bot message (with optional section flag)
   function addBotMessage(text, isSection = false) {
       const chatWindow = document.getElementById('chat-window');
+      if (!chatWindow) return;
+      
       const botMsg = document.createElement('div');
       botMsg.classList.add('message', 'bot');
       if (isSection) {
@@ -1084,6 +1142,8 @@
   // Helper to add option button
   function addOptionButton(sectionId, text) {
       const chatWindow = document.getElementById('chat-window');
+      if (!chatWindow) return;
+      
       const optionBtn = document.createElement('button');
       optionBtn.classList.add('option-btn');
       optionBtn.innerHTML = text;
@@ -1096,6 +1156,8 @@
   // Show typing indicator
   function showTypingIndicator() {
       const chatWindow = document.getElementById('chat-window');
+      if (!chatWindow) return;
+      
       const typing = document.createElement('div');
       typing.id = 'typing-indicator';
       typing.classList.add('typing-indicator');
@@ -1146,6 +1208,8 @@
   
       // Add user message
       const chatWindow = document.getElementById('chat-window');
+      if (!chatWindow) return;
+      
       const userMsg = document.createElement('div');
       userMsg.classList.add('message', 'user');
       userMsg.innerHTML = `<strong>You:</strong> ${message}`;
@@ -1182,9 +1246,11 @@
           });
       }, 1000);  // 1-second delay for typing effect
   
-      userInput.value = '';
-      // Reset height after send
-      userInput.style.height = 'auto';
+      if (userInput) {
+          userInput.value = '';
+          // Reset height after send
+          userInput.style.height = 'auto';
+      }
   }
   // Contact Form Submission (for widget)
   // Updated to accept an optional form parameter for targeted attachment
@@ -1244,7 +1310,9 @@
       });
       
       const chatWindow = document.getElementById('chat-window');
-      chatWindow.innerHTML = '';
+      if (chatWindow) {
+          chatWindow.innerHTML = '';
+      }
       currentSection = 'welcome';
       hasAIInteraction = false;
       showSection('welcome');
