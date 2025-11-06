@@ -203,6 +203,18 @@
       line-height: 1;
   }
   
+  .header-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+  }
+  
+  #chat-button svg {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+  }
+  
   .header-btn:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: scale(1.1);
@@ -699,22 +711,38 @@
         container.id = 'chatbot-container';
         container.innerHTML = `
           <div id="chat-button" onclick="toggleChat()">
-          <i class="fas fa-comment-dots"></i>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M16 10h.01"></path>
+          </svg>
       </div>
       <div id="chat-container" style="display: none;">
           <div id="chat-header">
               <div class="header-actions-left">
                   <button id="menu-btn" class="header-btn" title="More Options">
-                      <i class="fas fa-ellipsis-v"></i>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                      </svg>
                   </button>
                   <button id="back-btn" class="header-btn back-btn" style="display: none;" onclick="showSection('welcome')" title="Back to Welcome">
-                      <i class="fas fa-arrow-left"></i>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
                   </button>
               </div>
               <div class="chat-title" id="chat-title">Chat with Alex</div>
               <div class="header-actions-right">
                   <button id="reset-btn" class="header-btn reset-btn" onclick="resetChat()" title="Reset Chat">
-                      <i class="fas fa-sync-alt"></i>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                      </svg>
                   </button>
               </div>
           </div>
@@ -727,14 +755,25 @@
       <!-- NEW: Menu Dropdown (positioned dynamically by JS) -->
       <div id="menu-dropdown" class="menu-dropdown">
           <a href="#" class="menu-item" onclick="showSection('report-issue'); toggleMenu(); return false;" title="Report Issue">
-              <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>Report Issue
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>Report Issue
           </a>
           <a href="#" class="menu-item" onclick="showSection('find-out-more'); toggleMenu(); return false;" title="Find Out More">
-              <i class="fas fa-info-circle" style="margin-right: 8px;"></i>Find Out More
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>Find Out More
           </a>
           <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0;">
           <a href="#" class="menu-item" onclick="toggleChat(); return false;" title="Close Chat">
-              <i class="fas fa-times" style="margin-right: 8px;"></i>Close Chat
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>Close Chat
           </a>
       </div>
       <div id="chat-bubble" style="display: none;">Try me!</div>
@@ -1568,6 +1607,3 @@
     window.toggleMenu = toggleMenu;
     window.debouncedSendMessage = debouncedSendMessage;
   })();
-  
-  
-  
