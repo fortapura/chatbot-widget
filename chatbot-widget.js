@@ -13,7 +13,6 @@
         this.fetchConfig().then(() => {
           this.injectStyles();
           this.injectHTML();
-          this.attachEventListeners();
         });
       },
   
@@ -1474,7 +1473,17 @@
     );
   }
       
+    // Expose ChatbotWidget to global scope
     window.ChatbotWidget = ChatbotWidget;
+    
+    // Expose functions needed by inline HTML handlers to global scope
+    window.toggleChat = toggleChat;
+    window.sendMessage = sendMessage;
+    window.resetChat = resetChat;
+    window.showSection = showSection;
+    window.toggleMenu = toggleMenu;
+    window.debouncedSendMessage = debouncedSendMessage;
   })();
+  
   
   
