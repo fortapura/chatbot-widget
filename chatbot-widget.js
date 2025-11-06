@@ -39,6 +39,13 @@
       injectStyles: function() {
         const style = document.createElement('style');
         style.textContent = `
+          #chatbot-container {
+            position: fixed;
+            z-index: 1000;
+            transform: none !important;
+            scale: 1 !important;
+          }
+          
           #chat-button {
             position: fixed;
             bottom: 24px;
@@ -50,8 +57,13 @@
             box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
             cursor: pointer;
             z-index: 1000;
-            width: 60px;
-            height: 60px;
+            width: 60px !important;
+            height: 60px !important;
+            min-width: 60px !important;
+            min-height: 60px !important;
+            max-width: 60px !important;
+            max-height: 60px !important;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -210,8 +222,10 @@
   }
   
   #chat-button svg {
-      width: 24px;
-      height: 24px;
+      width: 24px !important;
+      height: 24px !important;
+      min-width: 24px !important;
+      min-height: 24px !important;
       flex-shrink: 0;
   }
   
@@ -615,8 +629,12 @@
       #chat-button {
           bottom: 16px;
           right: 16px;
-          width: 56px;
-          height: 56px;
+          width: 56px !important;
+          height: 56px !important;
+          min-width: 56px !important;
+          min-height: 56px !important;
+          max-width: 56px !important;
+          max-height: 56px !important;
           font-size: 20px;
       }
   
@@ -1607,3 +1625,4 @@
     window.toggleMenu = toggleMenu;
     window.debouncedSendMessage = debouncedSendMessage;
   })();
+  
