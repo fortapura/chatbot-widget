@@ -1183,8 +1183,21 @@
       return new Promise(resolve => setTimeout(resolve, ms));
   }
   
+  // Debounce helper function (native JavaScript implementation)
+  function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+          const later = () => {
+              clearTimeout(timeout);
+              func.apply(this, args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+      };
+  }
+  
   // Debounce sendMessage to prevent rapid fires (e.g., 1 second cooldown)
-  const debouncedSendMessage = _.debounce(sendMessage, 1000);  // 1-second debounce
+  const debouncedSendMessage = debounce(sendMessage, 1000);  // 1-second debounce
   
   // Chat Functionality (AI mode)
   function sendMessage() {
@@ -1463,4 +1476,5 @@
       
     window.ChatbotWidget = ChatbotWidget;
   })();
+  
   
