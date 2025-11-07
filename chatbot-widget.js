@@ -1254,9 +1254,9 @@
           if (chatWindow) {
               chatWindow.scrollTop = chatWindow.scrollHeight;
           }
-      } else if (sectionId === 'find-out-more') {
-          // Handle "Find Out More" - Navigate to about page in same tab
-          window.location.href = 'https://www.fortapura.com/about';
+    } else if (sectionId === 'find-out-more') {
+        // Handle "Find Out More" - Open about page in new tab
+        window.open('https://www.fortapura.com/about', '_blank');
           return;  // No further processing
       } else {
           // Predefined sections (faq, contact, etc.) - "Open new space" by clearing window
@@ -1703,4 +1703,3 @@
     window.toggleMenu = toggleMenu;
     window.debouncedSendMessage = debouncedSendMessage;
   })();
-  
