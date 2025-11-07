@@ -1256,7 +1256,7 @@
           }
       } else if (sectionId === 'find-out-more') {
           // Handle "Find Out More" - Navigate to about page in same tab
-          window.location.href = '/about';
+          window.location.href = 'https://www.fortapura.com/about';
           return;  // No further processing
       } else {
           // Predefined sections (faq, contact, etc.) - "Open new space" by clearing window
