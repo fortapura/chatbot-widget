@@ -39,28 +39,28 @@
       injectStyles: function() {
         const style = document.createElement('style');
         style.textContent = `
-          #chat-button {
+          #fortapura-widget-root #fortapura-chat-button {
             position: fixed;
             bottom: 24px;
-            right: 24px;
-            background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 90%, black) 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 50%;
-            box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
-            cursor: pointer;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: none;
+                right: 24px;
+                background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 90%, black) 100%);
+                color: white;
+                padding: 16px;
+                    border-radius: 50%;
+                    box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
+                    cursor: pointer;
+                    z-index: 1000;
+                    width: 60px;
+                    height: 60px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    border: none;
         }
 
-        #chat-button::before {
+        #fortapura-chat-button::before {
             content: '';
             position: absolute;
             top: 50%;
@@ -71,10 +71,10 @@
             border-radius: 50%;
             border: 3px solid ${this.config.primary_color};
             opacity: 0;
-            animation: subtlePulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            animation: fortapura-subtlePulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        #chat-button::after {
+        #fortapura-chat-button::after {
             content: '';
             position: absolute;
             top: 50%;
@@ -85,10 +85,10 @@
             border-radius: 50%;
             border: 3px solid ${this.config.primary_color}99;
             opacity: 0;
-            animation: subtlePulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite 1.5s;
+            animation: fortapura-subtlePulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite 1.5s;
         }
 
-        @keyframes subtlePulse {
+        @keyframes fortapura-subtlePulse {
             0% {
                 width: 100%;
                 height: 100%;
@@ -106,17 +106,17 @@
             }
         }
 
-        #chat-button:hover {
+        #fortapura-chat-button:hover {
             transform: scale(1.15) translateY(-4px) rotate(5deg);
             box-shadow: 0 16px 40px color-mix(in srgb, ${this.config.primary_color} 50%, white)99;
             background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 80%, black) 100%);
         }
   
-        #chat-button.bouncing {
-            animation: doubleJump 1.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        #fortapura-chat-button.fortapura-bouncing {
+            animation: fortapura-doubleJump 1.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
         }
   
-        @keyframes doubleJump {
+        @keyframes fortapura-doubleJump {
             0% { 
                 transform: translateY(0);
       }
@@ -140,7 +140,7 @@
       }
   }
   
-  #chat-container {
+  #fortapura-chat-container {
       position: fixed;
       bottom: 96px;
       right: 24px;
@@ -157,7 +157,7 @@
       border: 1px solid color-mix(in srgb, ${this.config.primary_color} 50%, black)1a;
   }
 
-  #chat-header {
+  #fortapura-chat-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -170,15 +170,15 @@
       box-shadow: 0 4px 12px color-mix(in srgb, ${this.config.primary_color} 50%, black)33;
   }
   
-  .header-actions-left,
-  .header-actions-right {
+  .fortapura-header-actions-left,
+  .fortapura-header-actions-right {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
   }
   
-  .chat-title {
+  .fortapura-chat-title {
       flex: 1;
       text-align: center;
       margin: 0 12px;
@@ -186,7 +186,7 @@
       letter-spacing: 0.5px;
   }
   
-  .header-btn {
+  .fortapura-header-btn {
       background: rgba(255, 255, 255, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: white;
@@ -203,25 +203,25 @@
       line-height: 1;
   }
   
-  .header-btn svg {
+  .fortapura-header-btn svg {
       width: 20px;
       height: 20px;
       flex-shrink: 0;
   }
   
-  #chat-button svg {
+  #fortapura-chat-button svg {
       width: 24px;
       height: 24px;
       flex-shrink: 0;
   }
   
-  .header-btn:hover {
+  .fortapura-header-btn:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: scale(1.1);
       box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
   }
   
-  .menu-dropdown {
+  .fortapura-menu-dropdown {
       background: color-mix(in srgb, ${this.config.primary_color} 20%, black);
       backdrop-filter: blur(20px);
       border: 1px solid ${this.config.primary_color}66;
@@ -239,7 +239,7 @@
       margin-top: 8px;
   }
 
-  .menu-dropdown::before {
+  .fortapura-menu-dropdown::before {
       content: '';
       position: absolute;
       top: -6px;
@@ -251,13 +251,13 @@
       border-bottom: 6px solid color-mix(in srgb, ${this.config.primary_color} 20%, black);
   }
   
-  .menu-dropdown.show {
+  .fortapura-menu-dropdown.fortapura-show {
       opacity: 1;
       transform: translateY(0) scale(1);
       display: block !important;
   }
   
-  .menu-item {
+  .fortapura-menu-item {
       display: block;
       padding: 14px 20px;
       color: white;
@@ -268,16 +268,16 @@
       white-space: nowrap;
   }
   
-  .menu-item:hover {
+  .fortapura-menu-item:hover {
       background: ${this.config.primary_color}4d;
       padding-left: 24px;
   }
   
-  .menu-item:last-child {
+  .fortapura-menu-item:last-child {
       border-bottom: none;
   }
   
-  #chat-window {
+  #fortapura-chat-window {
       flex: 1;
       max-height: 400px;
       overflow-y: auto;
@@ -287,21 +287,21 @@
       scrollbar-color: ${this.config.primary_color} color-mix(in srgb, ${this.config.secondary_color} 10%, white);
   }
 
-  #chat-window::-webkit-scrollbar {
+  #fortapura-chat-window::-webkit-scrollbar {
       width: 6px;
   }
 
-  #chat-window::-webkit-scrollbar-track {
+  #fortapura-chat-window::-webkit-scrollbar-track {
       background: color-mix(in srgb, ${this.config.secondary_color} 10%, white);
       border-radius: 3px;
   }
 
-  #chat-window::-webkit-scrollbar-thumb {
+  #fortapura-chat-window::-webkit-scrollbar-thumb {
       background: ${this.config.primary_color};
       border-radius: 3px;
   }
   
-  #chat-input-container {
+  #fortapura-chat-input-container {
       display: flex;
       gap: 12px;
       padding: 20px;
@@ -311,7 +311,7 @@
       box-shadow: 0 -4px 12px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
   
-  #userInput {
+  #fortapura-userInput {
       flex: 1;
       min-height: 48px;
       max-height: 140px;
@@ -329,14 +329,14 @@
       background: color-mix(in srgb, ${this.config.secondary_color} 3%, white);
   }
   
-  #userInput:focus {
+  #fortapura-userInput:focus {
       outline: none;
       border-color: ${this.config.primary_color};
       box-shadow: 0 0 0 4px ${this.config.primary_color}1a;
       background: white;
   }
 
-  #chat-input-container .btn {
+  #fortapura-chat-input-container .fortapura-btn {
       background: ${this.config.primary_color}; /* Solid blue—change this hex to your preferred color! */
       color: white;
       border: none;
@@ -349,13 +349,13 @@
       min-width: 80px;
   }
 
-  #chat-input-container .btn:hover {
+  #fortapura-chat-input-container .fortapura-btn:hover {
       background: color-mix(in srgb, ${this.config.primary_color} 90%, black);
       transform: translateY(-2px);
       box-shadow: 0 8px 20px color-mix(in srgb, ${this.config.primary_color} 30%, transparent);
   }
   
-  .message {
+  .fortapura-message {
       margin: 12px 0;
       padding: 14px 18px;
       border-radius: 18px;
@@ -365,16 +365,16 @@
       word-wrap: break-word;
       overflow-wrap: break-word;
       word-break: break-word;
-      animation: messageSlide 0.3s ease;
+      animation: fortapura-messageSlide 0.3s ease;
       overflow: hidden;
   }
   
-  @keyframes messageSlide {
+  @keyframes fortapura-messageSlide {
       from { opacity: 0; transform: translateX(20px); }
       to { opacity: 1; transform: translateX(0); }
   }
   
-  .user {
+  .fortapura-user {
       background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 90%, black) 100%);
       color: white;
       align-self: flex-end;
@@ -383,7 +383,7 @@
       font-weight: 400;
   }
 
-  .bot {
+  .fortapura-bot {
       background: white;
       color: color-mix(in srgb, ${this.config.primary_color} 50%, black);
       align-self: flex-start;
@@ -397,7 +397,7 @@
       max-width: 85%;
   }
   
-  .profile-img {
+  .fortapura-profile-img {
       width: 56px;
       height: 56px;
       border-radius: 50%;
@@ -407,7 +407,7 @@
       box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 20%, transparent);
   }
   
-  .message-content {
+  .fortapura-message-content {
       flex: 1;
       word-wrap: break-word;
       overflow-wrap: break-word;
@@ -415,7 +415,7 @@
       max-width: 100%;
   }
   
-  .message-content a {
+  .fortapura-message-content a {
       word-wrap: break-word;
       overflow-wrap: break-word;
       word-break: break-all;
@@ -426,19 +426,19 @@
       transition: color 0.2s ease;
   }
 
-  .message-content a:hover {
+  .fortapura-message-content a:hover {
       color: color-mix(in srgb, ${this.config.primary_color} 90%, black);
       text-decoration: underline;
   }
 
-  .bot-name {
+  .fortapura-bot-name {
       font-weight: 600;
       font-size: 0.85em;
       margin-bottom: 6px;
       color: color-mix(in srgb, ${this.config.primary_color} 50%, black);
   }
   
-  .contact-form-widget {
+  .fortapura-contact-form-widget {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -447,7 +447,7 @@
       max-width: 100%;
   }
   
-  .contact-form-widget label {
+  .fortapura-contact-form-widget label {
       display: block;
       font-size: 0.85em;
       font-weight: 500;
@@ -455,8 +455,8 @@
       margin-bottom: 0;
   }
   
-  .contact-form-widget input,
-  .contact-form-widget textarea {
+  .fortapura-contact-form-widget input,
+  .fortapura-contact-form-widget textarea {
       width: 100%;
       max-width: 100%;
       padding: 8px 10px;
@@ -471,19 +471,19 @@
       display: block;
   }
   
-  .contact-form-widget input:focus,
-  .contact-form-widget textarea:focus {
+  .fortapura-contact-form-widget input:focus,
+  .fortapura-contact-form-widget textarea:focus {
       outline: none;
       border-color: ${this.config.primary_color};
       box-shadow: 0 0 0 3px color-mix(in srgb, ${this.config.primary_color} 10%, transparent);
   }
   
-  .contact-form-widget textarea {
+  .fortapura-contact-form-widget textarea {
       min-height: 80px;
       resize: vertical;
   }
   
-  .contact-form-widget button {
+  .fortapura-contact-form-widget button {
       width: 100%;
       background: ${this.config.primary_color};
       color: white;
@@ -498,13 +498,13 @@
       box-sizing: border-box;
   }
 
-  .contact-form-widget button:hover {
+  .fortapura-contact-form-widget button:hover {
       background: color-mix(in srgb, ${this.config.primary_color} 90%, black);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px color-mix(in srgb, ${this.config.primary_color} 30%, transparent);
   }
   
-  .contact-form-widget .contact-response {
+  .fortapura-contact-form-widget .fortapura-contact-response {
       margin-top: 10px;
       padding: 10px;
       border-radius: 8px;
@@ -512,7 +512,7 @@
       text-align: center;
   }
   
-  .typing-indicator {
+  .fortapura-typing-indicator {
       background: white;
       color: color-mix(in srgb, ${this.config.secondary_color} 80%, black);
       align-self: flex-start;
@@ -527,30 +527,30 @@
       box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
   
-  .typing-indicator span {
+  .fortapura-typing-indicator span {
       display: inline-block;
       width: 8px;
       height: 8px;
       margin: 0 2px;
       background: color-mix(in srgb, ${this.config.primary_color} 70%, black);
       border-radius: 50%;
-      animation: typing 1.4s infinite ease-in-out;
+      animation: fortapura-typing 1.4s infinite ease-in-out;
   }
   
-  .typing-indicator span:nth-child(2) {
+  .fortapura-typing-indicator span:nth-child(2) {
       animation-delay: 0.2s;
   }
   
-  .typing-indicator span:nth-child(3) {
+  .fortapura-typing-indicator span:nth-child(3) {
       animation-delay: 0.4s;
   }
   
-  @keyframes typing {
+  @keyframes fortapura-typing {
       0%, 60%, 100% { transform: translateY(0); }
       30% { transform: translateY(-6px); }
   }
   
-  .option-btn {
+  .fortapura-option-btn {
       background: white;
       color: color-mix(in srgb, ${this.config.primary_color} 50%, black);
       padding: 12px 16px;
@@ -567,7 +567,7 @@
       box-shadow: 0 2px 8px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
 
-  .option-btn:hover {
+  .fortapura-option-btn:hover {
       background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 90%, black) 100%);
       color: white;
       transform: none; /* Removed transform for subtler effect */
@@ -575,13 +575,13 @@
       border-color: ${this.config.primary_color};
   }
 
-  .section-response {
+  .fortapura-section-response {
       background: white !important;
       border-left: 4px solid ${this.config.primary_color};
       margin-top: 8px !important;
   }
 
-  #chat-bubble {
+  #fortapura-chat-bubble {
       position: fixed;
       bottom: 90px;
       right: 50px;
@@ -594,17 +594,17 @@
       font-weight: 500;
       display: none;
       z-index: 1001;
-      animation: bubbleFloat 0.6s ease-in-out;
+      animation: fortapura-bubbleFloat 0.6s ease-in-out;
       outline: 6px solid transparent;
   }
   
-  @keyframes bubbleFloat {
+  @keyframes fortapura-bubbleFloat {
       0% { transform: translateY(10px) scale(0.9); opacity: 0; }
       100% { transform: translateY(0) scale(1); opacity: 1; }
   }
   
   @media (max-width: 768px) {
-  #chat-container {
+  #fortapura-chat-container {
           width: 95%;
           max-width: 340px;
           right: 2.5%;
@@ -612,7 +612,7 @@
           max-height: 80vh;
       }
   
-      #chat-button {
+      #fortapura-chat-button {
           bottom: 16px;
           right: 16px;
           width: 56px;
@@ -620,67 +620,67 @@
           font-size: 20px;
       }
   
-      #chat-header {
+      #fortapura-chat-header {
           padding: 16px;
       }
   
-      .header-btn {
+      .fortapura-header-btn {
           width: 36px;
           height: 36px;
           font-size: 1em;
       }
   
-      #chat-window {
+      #fortapura-chat-window {
           padding: 16px;
           max-height: 300px;
       }
   
-      #chat-input-container {
+      #fortapura-chat-input-container {
           padding: 16px;
           gap: 8px;
       }
   
-      #userInput {
+      #fortapura-userInput {
           min-height: 44px;
           padding: 10px 14px;
           font-size: 16px; /* Prevent zoom on iOS */
       }
   
-      .message {
+      .fortapura-message {
           max-width: 90%;
           padding: 12px 16px;
       }
   
-      .option-btn {
+      .fortapura-option-btn {
           width: 95%;
           padding: 10px 14px;
           font-size: 0.95em;
       }
   
       /* Contact Form Widget Mobile Styles */
-      .contact-form-widget {
+      .fortapura-contact-form-widget {
           gap: 8px;
           margin-top: 10px;
       }
   
-      .contact-form-widget label {
+      .fortapura-contact-form-widget label {
           font-size: 13px;
           margin-bottom: 0;
       }
   
-      .contact-form-widget input,
-      .contact-form-widget textarea {
+      .fortapura-contact-form-widget input,
+      .fortapura-contact-form-widget textarea {
           padding: 10px;
           font-size: 14px;
           margin-top: 3px;
           border-radius: 6px;
       }
   
-      .contact-form-widget textarea {
+      .fortapura-contact-form-widget textarea {
           min-height: 70px;
       }
   
-      .contact-form-widget button {
+      .fortapura-contact-form-widget button {
           width: 100%;
           padding: 12px;
           font-size: 14px;
@@ -688,7 +688,7 @@
           margin-top: 4px;
       }
   
-      .contact-response {
+      .fortapura-contact-response {
           font-size: 13px;
       }
   }
@@ -700,7 +700,7 @@
   
       updateAssistantName: function() {
         // Update assistant name in UI after config is loaded
-        const chatTitle = document.getElementById('chat-title');
+        const chatTitle = document.getElementById('fortapura-chat-title');
         if (chatTitle && this.config && this.config.assistant_name) {
           chatTitle.textContent = `Chat with ${this.config.assistant_name}`;
         }
@@ -708,53 +708,53 @@
 
       injectHTML: function() {
         const container = document.createElement('div');
-        container.id = 'chatbot-container';
+        container.id = 'fortapura-widget-root';
         container.innerHTML = `
-          <div id="chat-button" onclick="toggleChat()">
+          <div id="fortapura-chat-button" onclick="toggleChat()">
           <i class="fas fa-comment-dots"></i>
       </div>
-      <div id="chat-container" style="display: none;">
-          <div id="chat-header">
-              <div class="header-actions-left">
-                  <button id="menu-btn" class="header-btn" title="More Options">
+      <div id="fortapura-chat-container" style="display: none;">
+          <div id="fortapura-chat-header">
+              <div class="fortapura-header-actions-left">
+                  <button id="fortapura-menu-btn" class="fortapura-header-btn" title="More Options">
                       <i class="fas fa-ellipsis-v"></i>
                   </button>
-                  <button id="back-btn" class="header-btn back-btn" style="display: none;" onclick="showSection('welcome')" title="Back to Welcome">
+                  <button id="fortapura-back-btn" class="fortapura-header-btn fortapura-back-btn" style="display: none;" onclick="showSection('welcome')" title="Back to Welcome">
                       <i class="fas fa-arrow-left"></i>
                   </button>
               </div>
-              <div class="chat-title" id="chat-title">Chat with Alex</div>
-              <div class="header-actions-right">
-                  <button id="reset-btn" class="header-btn reset-btn" onclick="resetChat()" title="Reset Chat">
+              <div class="fortapura-chat-title" id="fortapura-chat-title">Chat with Alex</div>
+              <div class="fortapura-header-actions-right">
+                  <button id="fortapura-reset-btn" class="fortapura-header-btn fortapura-reset-btn" onclick="resetChat()" title="Reset Chat">
                       <i class="fas fa-sync-alt"></i>
                   </button>
               </div>
           </div>
-          <div id="chat-window"></div>
-          <div id="chat-input-container">
-              <textarea id="userInput" placeholder="Ask us anything..." rows="1" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); debouncedSendMessage(); }"></textarea>
-              <button onclick="sendMessage()" class="btn">Send</button>
+          <div id="fortapura-chat-window"></div>
+          <div id="fortapura-chat-input-container">
+              <textarea id="fortapura-userInput" placeholder="Ask us anything..." rows="1" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); debouncedSendMessage(); }"></textarea>
+              <button onclick="sendMessage()" class="fortapura-btn">Send</button>
           </div>
       </div>
       <!-- NEW: Menu Dropdown (positioned dynamically by JS) -->
-      <div id="menu-dropdown" class="menu-dropdown">
-          <a href="#" class="menu-item" onclick="showSection('report-issue'); toggleMenu(); return false;" title="Report Issue">
+      <div id="fortapura-menu-dropdown" class="fortapura-menu-dropdown">
+          <a href="#" class="fortapura-menu-item" onclick="showSection('report-issue'); toggleMenu(); return false;" title="Report Issue">
               <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>Report Issue
           </a>
-          <a href="#" class="menu-item" onclick="showSection('find-out-more'); toggleMenu(); return false;" title="Find Out More">
+          <a href="#" class="fortapura-menu-item" onclick="showSection('find-out-more'); toggleMenu(); return false;" title="Find Out More">
               <i class="fas fa-info-circle" style="margin-right: 8px;"></i>Find Out More
           </a>
           <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0;">
-          <a href="#" class="menu-item" onclick="toggleChat(); return false;" title="Close Chat">
+          <a href="#" class="fortapura-menu-item" onclick="toggleChat(); return false;" title="Close Chat">
               <i class="fas fa-times" style="margin-right: 8px;"></i>Close Chat
           </a>
       </div>
-      <div id="chat-bubble" style="display: none;">Try me!</div>
+      <div id="fortapura-chat-bubble" style="display: none;">Try me!</div>
         `;
         document.body.appendChild(container);
         
         // Attach menu button event listener after HTML is injected
-        const menuBtn = document.getElementById('menu-btn');
+        const menuBtn = document.getElementById('fortapura-menu-btn');
         if (menuBtn) {
             menuBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -838,7 +838,7 @@
       // Replace Font Awesome icons with SVG fallbacks
       replaceIconsWithSVG: function() {
         // Chat button icon
-        const chatButton = document.getElementById('chat-button');
+        const chatButton = document.getElementById('fortapura-chat-button');
         if (chatButton) {
           const icon = chatButton.querySelector('i.fa-comment-dots');
           if (icon) {
@@ -847,7 +847,7 @@
         }
         
         // Menu button icon
-        const menuBtn = document.getElementById('menu-btn');
+        const menuBtn = document.getElementById('fortapura-menu-btn');
         if (menuBtn) {
           const icon = menuBtn.querySelector('i.fa-ellipsis-v');
           if (icon) {
@@ -856,7 +856,7 @@
         }
         
         // Back button icon
-        const backBtn = document.getElementById('back-btn');
+        const backBtn = document.getElementById('fortapura-back-btn');
         if (backBtn) {
           const icon = backBtn.querySelector('i.fa-arrow-left');
           if (icon) {
@@ -865,7 +865,7 @@
         }
         
         // Reset button icon
-        const resetBtn = document.getElementById('reset-btn');
+        const resetBtn = document.getElementById('fortapura-reset-btn');
         if (resetBtn) {
           const icon = resetBtn.querySelector('i.fa-sync-alt');
           if (icon) {
@@ -874,7 +874,7 @@
         }
         
         // Menu dropdown icons
-        const menuItems = document.querySelectorAll('#menu-dropdown .menu-item i');
+        const menuItems = document.querySelectorAll('#fortapura-menu-dropdown .fortapura-menu-item i');
         menuItems.forEach(icon => {
           if (icon.classList.contains('fa-exclamation-triangle')) {
             icon.outerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle; display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
@@ -914,12 +914,12 @@
               if (isChatClosed()) {
                   jumpCounter++;
                   if (jumpCounter % 3 !== 0){
-                      const chatButton = document.getElementById('chat-button');
+                      const chatButton = document.getElementById('fortapura-chat-button');
                       if (chatButton) {
-                          chatButton.classList.add('bouncing');
+                          chatButton.classList.add('fortapura-bouncing');
                           setTimeout(() => {
                               if (chatButton) {
-                                  chatButton.classList.remove('bouncing');
+                                  chatButton.classList.remove('fortapura-bouncing');
                               }
                           }, 1600);  // Animation duration - two smooth jumps
                       }
@@ -929,7 +929,7 @@
   
           setInterval(() => {
               if (isChatClosed()) {
-                  const chatBubble = document.getElementById('chat-bubble');
+                  const chatBubble = document.getElementById('fortapura-chat-bubble');
                   if (chatBubble && chatBubble.style) {
                       chatBubble.style.display = 'block';
                       setTimeout(() => {
@@ -941,7 +941,7 @@
               }
           }, 36000);  // Every 60 seconds
       // UPDATED: Enable Enter key for AI chat (now with textarea support and auto-resize)
-          const userInput = document.getElementById('userInput');
+          const userInput = document.getElementById('fortapura-userInput');
           if (userInput) {
               userInput.addEventListener('keydown', function(e) {
                       if (e.key === 'Enter' && !e.shiftKey) {  // No shift = send; shift = new line
@@ -959,7 +959,7 @@
   
   // Enhanced: Smooth scroll to bottom after adding messages
   function scrollToBottom() {
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       chatWindow.scrollTo({
           top: chatWindow.scrollHeight,
           behavior: 'smooth'
@@ -983,7 +983,7 @@
   const originalShowTypingIndicator = window.showTypingIndicator;
   window.showTypingIndicator = function() {
       originalShowTypingIndicator();
-      const typing = document.getElementById('typing-indicator');
+      const typing = document.getElementById('fortapura-typing-indicator');
       if (typing) {
           typing.style.opacity = '0';
           typing.style.transition = 'opacity 0.3s ease';
@@ -994,7 +994,7 @@
   
   // Check if chat is closed
   function isChatClosed() {
-      const chatContainer = document.getElementById('chat-container');
+      const chatContainer = document.getElementById('fortapura-chat-container');
       if (!chatContainer || !chatContainer.style) {
           return true;
       }
@@ -1006,7 +1006,7 @@
       // Prevent spam: if already processing, ignore
       if (isChatProcessing) return;
   
-      const chatContainer = document.getElementById('chat-container');
+      const chatContainer = document.getElementById('fortapura-chat-container');
       if (!chatContainer || !chatContainer.style) return;
       
       const isOpening = chatContainer.style.display === 'none';
@@ -1014,15 +1014,15 @@
       if (isOpening) {
           isChatProcessing = true;
           // Disable chat button visually
-          const chatButton = document.getElementById('chat-button');
+          const chatButton = document.getElementById('fortapura-chat-button');
           if (chatButton) {
               chatButton.style.pointerEvents = 'none';
               chatButton.style.opacity = '0.6';
           }
   
           // Hide menu and reset buttons during welcome animation
-          const menuBtn = document.getElementById('menu-btn');
-          const resetBtn = document.getElementById('reset-btn');
+          const menuBtn = document.getElementById('fortapura-menu-btn');
+          const resetBtn = document.getElementById('fortapura-reset-btn');
           if (menuBtn) {
               menuBtn.style.display = 'none';
           }
@@ -1031,8 +1031,8 @@
           }
 
           // Disable input field and send button during welcome animation
-          const userInput = document.getElementById('userInput');
-          const sendButton = document.querySelector('#chat-input-container .btn');
+          const userInput = document.getElementById('fortapura-userInput');
+          const sendButton = document.querySelector('#fortapura-chat-input-container .fortapura-btn');
           if (userInput) {
               userInput.disabled = true;
               userInput.placeholder = 'Please wait...';
@@ -1056,7 +1056,7 @@
           });
   
           // Always start fresh: Clear DOM and show welcome
-          const chatWindow = document.getElementById('chat-window');
+          const chatWindow = document.getElementById('fortapura-chat-window');
           chatWindow.innerHTML = '';  // Clear any lingering content
           currentSection = 'welcome';
           
@@ -1104,7 +1104,7 @@
       } else {
           // Closing: instant, no processing delay needed
           isChatProcessing = false;
-          const chatButton = document.getElementById('chat-button');
+          const chatButton = document.getElementById('fortapura-chat-button');
           if (chatButton) {
               chatButton.style.pointerEvents = 'auto';
               chatButton.style.opacity = '1';
@@ -1115,31 +1115,31 @@
               saveCurrentSessionToServer();  // Save before close
           }
           hasAIInteraction = false;
-          const chatWindow = document.getElementById('chat-window');
+          const chatWindow = document.getElementById('fortapura-chat-window');
           if (chatWindow) {
               chatWindow.innerHTML = '';  // Reset for next open
           }
-          const chatBubble = document.getElementById('chat-bubble');
+          const chatBubble = document.getElementById('fortapura-chat-bubble');
           if (chatBubble && chatBubble.style) {
               chatBubble.style.display = 'none';  // Hide bubble if open
           }
           // Close dropdown if open
-          const dropdown = document.getElementById('menu-dropdown');
+          const dropdown = document.getElementById('fortapura-menu-dropdown');
           if (dropdown && dropdown.style) {
               dropdown.style.display = 'none';
-              dropdown.classList.remove('show');
+              dropdown.classList.remove('fortapura-show');
           }
       }
   }
   
   // UPDATED: Extract and send current session history to server on close (async fetch)
   function saveCurrentSessionToServer() {
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const messages = [];
-      chatWindow.querySelectorAll('.message').forEach(msg => {
-          const role = msg.classList.contains('user') ? 'user' : 'assistant';
+      chatWindow.querySelectorAll('.fortapura-message').forEach(msg => {
+          const role = msg.classList.contains('fortapura-user') ? 'user' : 'assistant';
           const content = msg.textContent.trim();
           if (content) messages.push({ role, content });
       });
@@ -1172,8 +1172,8 @@
   // Show specific section
   async function showSection(sectionId, isFresh = false) {
       currentSection = sectionId;
-      const chatWindow = document.getElementById('chat-window');
-      const backBtn = document.getElementById('back-btn');
+      const chatWindow = document.getElementById('fortapura-chat-window');
+      const backBtn = document.getElementById('fortapura-back-btn');
   
       if (sectionId === 'welcome') {
           if (backBtn) {
@@ -1204,12 +1204,12 @@
           } else {
               // Back navigation: remove section response if present
               if (chatWindow) {
-                  const sectionMsg = chatWindow.querySelector('.section-response');
+                  const sectionMsg = chatWindow.querySelector('.fortapura-section-response');
                   if (sectionMsg) {
                       sectionMsg.remove();
                   }
                   // Rebuild full welcome if no greeting or buttons (since cleared on section nav)
-                  if (!chatWindow.querySelector('.message') || !chatWindow.querySelector('.option-btn')) {
+                  if (!chatWindow.querySelector('.fortapura-message') || !chatWindow.querySelector('.fortapura-option-btn')) {
                       const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
                       addBotMessage(`Hello! I'm ${assistantName}, your AI assistant. How can I help?`);
                       const welcomeOptions = getWelcomeOptions();
@@ -1241,10 +1241,10 @@
           // Remove option buttons (already cleared)
           addBotMessage(`
               Please describe the issue:<br>
-              <form class="report-form-widget">
-                  <label>Message: <textarea class="report-message" required></textarea></label>
-                  <button type="submit" class="btn">Submit Report</button>
-                  <p class="report-response"></p>
+              <form class="fortapura-report-form-widget">
+                  <label>Message: <textarea class="fortapura-report-message" required></textarea></label>
+                  <button type="submit" class="fortapura-btn">Submit Report</button>
+                  <p class="fortapura-report-response"></p>
               </form>
           `, true);  // Mark as section response
           submitReportForm();
@@ -1296,13 +1296,13 @@
   
   // Helper to add bot message (with optional section flag)
   function addBotMessage(text, isSection = false) {
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const botMsg = document.createElement('div');
-      botMsg.classList.add('message', 'bot');
+      botMsg.classList.add('fortapura-message', 'fortapura-bot');
       if (isSection) {
-          botMsg.classList.add('section-response');
+          botMsg.classList.add('fortapura-section-response');
       }
       
       // Convert links to clickable HTML
@@ -1311,9 +1311,9 @@
       const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
       const assistantAvatar = ChatbotWidget.config?.assistant_avatar_url || '/static/alex-profile.png';
       botMsg.innerHTML = `
-          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="profile-img">
-          <div class="message-content">
-              <div class="bot-name">${assistantName}</div>
+          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="fortapura-profile-img">
+          <div class="fortapura-message-content">
+              <div class="fortapura-bot-name">${assistantName}</div>
               ${processedText}
           </div>
       `;
@@ -1321,7 +1321,7 @@
       chatWindow.scrollTop = chatWindow.scrollHeight;
   
       // Attach form listener if the contact form is present in this message
-      const form = botMsg.querySelector('.contact-form-widget');
+      const form = botMsg.querySelector('.fortapura-contact-form-widget');
       if (form) {
           submitContactForm(form);  // Pass the specific form instance
       }
@@ -1329,11 +1329,11 @@
   
   // Helper to add option button
   function addOptionButton(sectionId, text) {
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const optionBtn = document.createElement('button');
-      optionBtn.classList.add('option-btn');
+      optionBtn.classList.add('fortapura-option-btn');
       optionBtn.innerHTML = text;
       // Updated onclick: pass false for non-fresh (back nav)
       optionBtn.onclick = () => showSection(sectionId, false);
@@ -1343,16 +1343,16 @@
   
   // Show typing indicator
   function showTypingIndicator() {
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const typing = document.createElement('div');
-      typing.id = 'typing-indicator';
-      typing.classList.add('typing-indicator');
+      typing.id = 'fortapura-typing-indicator';
+      typing.classList.add('fortapura-typing-indicator');
       const assistantAvatar = ChatbotWidget.config?.assistant_avatar_url || '/static/alex-profile.png';
       const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
       typing.innerHTML = `
-          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="profile-img">
+          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="fortapura-profile-img">
           <span></span><span></span><span></span>
       `;
       chatWindow.appendChild(typing);
@@ -1361,7 +1361,7 @@
   
   // Remove typing indicator
   function removeTypingIndicator() {
-      const typing = document.getElementById('typing-indicator');
+      const typing = document.getElementById('fortapura-typing-indicator');
       if (typing) typing.remove();
   }
   
@@ -1388,7 +1388,7 @@
   
   // Chat Functionality (AI mode)
   function sendMessage() {
-      const userInput = document.getElementById('userInput');
+      const userInput = document.getElementById('fortapura-userInput');
       
       // Prevent sending during welcome animation or processing
       if (isChatProcessing || userInput.disabled) {
@@ -1410,11 +1410,11 @@
       }
   
       // Add user message
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const userMsg = document.createElement('div');
-      userMsg.classList.add('message', 'user');
+      userMsg.classList.add('fortapura-message', 'fortapura-user');
       userMsg.innerHTML = `<strong>You:</strong> ${message}`;
       chatWindow.appendChild(userMsg);
       chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -1464,15 +1464,15 @@
   // Contact Form Submission (for widget)
   // Updated to accept an optional form parameter for targeted attachment
   function submitContactForm(targetForm = null) {
-      const form = targetForm || document.querySelector('.contact-form-widget');
+      const form = targetForm || document.querySelector('.fortapura-contact-form-widget');
       if (!form) return;  // Form might not exist
       form.addEventListener('submit', function(e) {
           e.preventDefault();
-          const name = form.querySelector('.contact-name').value;
-          const business_name = form.querySelector('.contact-business-name').value;
-          const email = form.querySelector('.contact-email').value;
-          const phone = form.querySelector('.contact-phone').value;
-          const message = form.querySelector('.contact-message').value;
+          const name = form.querySelector('.fortapura-contact-name').value;
+          const business_name = form.querySelector('.fortapura-contact-business-name').value;
+          const email = form.querySelector('.fortapura-contact-email').value;
+          const phone = form.querySelector('.fortapura-contact-phone').value;
+          const message = form.querySelector('.fortapura-contact-message').value;
   
           fetch(`${ChatbotWidget.apiEndpoint}/contact`, {
               method: 'POST',
@@ -1499,16 +1499,16 @@
               if (!ok) {
                   throw data;
               }
-              const responseEl = form.querySelector('.contact-response');
+              const responseEl = form.querySelector('.fortapura-contact-response');
               responseEl.textContent = data.message;
-              responseEl.className = 'success';
+              responseEl.className = 'fortapura-success';
               form.reset();
           })
           .catch(error => {
               console.error('Error:', error);
-              const responseEl = form.querySelector('.contact-response');
+              const responseEl = form.querySelector('.fortapura-contact-response');
               responseEl.textContent = error.error || 'Error submitting form. Please try again.';
-              responseEl.className = 'error';
+              responseEl.className = 'fortapura-error';
               form.reset();
           });
       });
@@ -1531,7 +1531,7 @@
           console.error('Error clearing history:', error);
       });
       
-      const chatWindow = document.getElementById('chat-window');
+      const chatWindow = document.getElementById('fortapura-chat-window');
       if (chatWindow) {
           chatWindow.innerHTML = '';
       }
@@ -1542,11 +1542,11 @@
   
   // Report Form Submission
   function submitReportForm(targetForm = null) {
-      const form = targetForm || document.querySelector('.report-form-widget');
+      const form = targetForm || document.querySelector('.fortapura-report-form-widget');
       if (!form) return;  // Form might not exist
       form.addEventListener('submit', function(e) {
           e.preventDefault();
-          const message = form.querySelector('.report-message').value;
+          const message = form.querySelector('.fortapura-report-message').value;
   
           // Fetch current chat history from backend
           fetch(`${ChatbotWidget.apiEndpoint}/history?session_id=${ChatbotWidget.sessionId}`, {
@@ -1583,16 +1583,16 @@
                       if (!ok) {
                           throw data;
                       }
-                      const responseEl = form.querySelector('.report-response');
+                      const responseEl = form.querySelector('.fortapura-report-response');
                       responseEl.textContent = data.message;
-                      responseEl.className = 'success';
+                      responseEl.className = 'fortapura-success';
                       form.reset();
                   })
                   .catch(error => {
                       console.error('Error:', error);
-                      const responseEl = form.querySelector('.report-response');
+                      const responseEl = form.querySelector('.fortapura-report-response');
                       responseEl.textContent = error.error || 'Error submitting report. Please try again.';
-                      responseEl.className = 'error';
+                      responseEl.className = 'fortapura-error';
                       form.reset();
                   });
               })
@@ -1605,16 +1605,16 @@
   
   // FIXED: Toggle Menu (Dynamic Under Dots) - Precise positioning under menu button
   function toggleMenu() {
-      const dropdown = document.getElementById('menu-dropdown');
-      const menuBtn = document.getElementById('menu-btn');
+      const dropdown = document.getElementById('fortapura-menu-dropdown');
+      const menuBtn = document.getElementById('fortapura-menu-btn');
       if (!dropdown || !menuBtn || !dropdown.style) return;
   
-      const isVisible = dropdown.classList.contains('show');
+      const isVisible = dropdown.classList.contains('fortapura-show');
       
       if (isVisible) {
           // Close
           dropdown.style.display = 'none';
-          dropdown.classList.remove('show');
+          dropdown.classList.remove('fortapura-show');
           dropdown.style.position = '';
           dropdown.style.top = '';
           dropdown.style.left = '';
@@ -1635,18 +1635,18 @@
           const arrowOffset = (btnRect.width / 2) - 6;  // 6px = half arrow width (12px total)
           dropdown.style.setProperty('--arrow-offset', `${arrowOffset}px`);
           
-          setTimeout(() => dropdown.classList.add('show'), 10);
+          setTimeout(() => dropdown.classList.add('fortapura-show'), 10);
       }
   }
   
   // FIXED: Close on Outside Click (enhanced to include menuBtn check and only if open)
   document.addEventListener('click', function(event) {
-      const menuBtn = document.getElementById('menu-btn');
-      const dropdown = document.getElementById('menu-dropdown');
+      const menuBtn = document.getElementById('fortapura-menu-btn');
+      const dropdown = document.getElementById('fortapura-menu-dropdown');
       
       if (dropdown && dropdown.style && dropdown.style.display === 'block' && menuBtn && !menuBtn.contains(event.target) && !dropdown.contains(event.target)) {
           dropdown.style.display = 'none';
-          dropdown.classList.remove('show');
+          dropdown.classList.remove('fortapura-show');
           dropdown.style.position = '';
           dropdown.style.top = '';
           dropdown.style.left = '';
@@ -1657,10 +1657,10 @@
   // FIXED: Escape Close (only if open)
   document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
-          const dropdown = document.getElementById('menu-dropdown');
+          const dropdown = document.getElementById('fortapura-menu-dropdown');
           if (dropdown && dropdown.style && dropdown.style.display === 'block') {
               dropdown.style.display = 'none';
-              dropdown.classList.remove('show');
+              dropdown.classList.remove('fortapura-show');
               dropdown.style.position = '';
               dropdown.style.top = '';
               dropdown.style.left = '';
