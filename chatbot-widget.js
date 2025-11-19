@@ -14,6 +14,8 @@
           this.injectStyles();
           this.injectHTML();
           this.updateAssistantName();
+          // Apply filled icon after HTML is injected
+          this.applyIcon();
         });
       },
   
@@ -39,23 +41,37 @@
       injectStyles: function() {
         const style = document.createElement('style');
         style.textContent = `
+          #fortapura-widget-root {
+            position: relative;
+            width: auto;
+            height: auto;
+            max-width: none;
+            max-height: none;
+          }
+          
           #fortapura-widget-root #fortapura-chat-button {
             position: fixed;
             bottom: 24px;
                 right: 24px;
                 background: linear-gradient(135deg, ${this.config.primary_color} 0%, color-mix(in srgb, ${this.config.primary_color} 90%, black) 100%);
                 color: white;
-                padding: 16px;
+                padding: 22px;
                     border-radius: 50%;
                     box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
                     cursor: pointer;
                     z-index: 1000;
-                    width: 60px;
-                    height: 60px;
+                    width: 97px !important;
+                    height: 97px !important;
+                    min-width: 97px !important;
+                    min-height: 97px !important;
+                    max-width: 97px !important;
+                    max-height: 97px !important;
+                    box-sizing: border-box !important;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 24px;
+                    flex-shrink: 0 !important;
+                    font-size: 38px;
                     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
                     border: none;
         }
@@ -210,8 +226,8 @@
   }
   
   #fortapura-chat-button svg {
-      width: 24px;
-      height: 24px;
+      width: 38px;
+      height: 38px;
       flex-shrink: 0;
   }
   
@@ -307,7 +323,7 @@
       padding: 20px;
       border-top: 1px solid color-mix(in srgb, ${this.config.secondary_color} 15%, white);
       background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
-      align-items: flex-end;
+      align-items: center;
       box-shadow: 0 -4px 12px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
   }
   
@@ -617,9 +633,13 @@
       #fortapura-chat-button {
           bottom: 16px;
           right: 16px;
-          width: 56px;
-          height: 56px;
-          font-size: 20px;
+          width: 86px !important;
+          height: 86px !important;
+          min-width: 86px !important;
+          min-height: 86px !important;
+          max-width: 86px !important;
+          max-height: 86px !important;
+          font-size: 32px;
       }
   
       #fortapura-chat-header {
@@ -713,7 +733,7 @@
         container.id = 'fortapura-widget-root';
         container.innerHTML = `
           <div id="fortapura-chat-button" onclick="toggleChat()">
-          <i class="fas fa-comment-dots"></i>
+          <i class="fas fa-message-circle"></i>
       </div>
       <div id="fortapura-chat-container" style="display: none;">
           <div id="fortapura-chat-header">
@@ -792,7 +812,7 @@
           
           // Method 2: Check if icon actually renders by testing with a hidden element
           const testIcon = document.createElement('i');
-          testIcon.className = 'fas fa-comment-dots';
+          testIcon.className = 'fas fa-message-circle';
           testIcon.style.position = 'absolute';
           testIcon.style.visibility = 'hidden';
           testIcon.style.fontSize = '16px';
@@ -837,14 +857,28 @@
         }, 500); // Wait 500ms for Font Awesome to load
       },
       
-      // Replace Font Awesome icons with SVG fallbacks
-      replaceIconsWithSVG: function() {
-        // Chat button icon
+      // Chat button icon - filled message circle
+      chatButtonIcon: '<svg width="38" height="38" viewBox="0 0 24 24" fill="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>',
+      
+      // Apply the filled message circle icon
+      applyIcon: function() {
         const chatButton = document.getElementById('fortapura-chat-button');
         if (chatButton) {
-          const icon = chatButton.querySelector('i.fa-comment-dots');
+          const icon = chatButton.querySelector('i, svg');
           if (icon) {
-            icon.outerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M8 10h.01"></path><path d="M12 10h.01"></path><path d="M16 10h.01"></path></svg>';
+            icon.outerHTML = this.chatButtonIcon;
+          }
+        }
+      },
+      
+      // Replace Font Awesome icons with SVG fallbacks
+      replaceIconsWithSVG: function() {
+        // Chat button icon - use filled message circle
+        const chatButton = document.getElementById('fortapura-chat-button');
+        if (chatButton) {
+          const icon = chatButton.querySelector('i, svg');
+          if (icon) {
+            icon.outerHTML = this.chatButtonIcon;
           }
         }
         
