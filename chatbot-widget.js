@@ -347,6 +347,8 @@
       font-weight: 500;
       white-space: nowrap;
       min-width: 80px;
+      width: auto;
+      flex-shrink: 0;
   }
 
   #fortapura-chat-input-container .fortapura-btn:hover {
