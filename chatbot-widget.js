@@ -91,17 +91,17 @@
                     box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
                     cursor: pointer;
                     z-index: 1000;
-                    width: 97px !important;
-                    height: 97px !important;
-                    min-width: 97px !important;
-                    min-height: 97px !important;
-                    max-width: 97px !important;
-                    max-height: 97px !important;
-                    box-sizing: border-box !important;
+                    width: 97px;
+                    height: 97px;
+                    min-width: 97px;
+                    min-height: 97px;
+                    max-width: 97px;
+                    max-height: 97px;
+                    box-sizing: border-box;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    flex-shrink: 0 !important;
+                    flex-shrink: 0;
                     font-size: 38px;
                     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
                     border: none;
@@ -301,7 +301,7 @@
   .fortapura-menu-dropdown.fortapura-show {
       opacity: 1;
       transform: translateY(0) scale(1);
-      display: block !important;
+      display: block;
   }
   
   .fortapura-menu-item {
@@ -664,12 +664,12 @@
       #fortapura-chat-button {
           bottom: 16px;
           right: 16px;
-          width: 86px !important;
-          height: 86px !important;
-          min-width: 86px !important;
-          min-height: 86px !important;
-          max-width: 86px !important;
-          max-height: 86px !important;
+          width: 86px;
+          height: 86px;
+          min-width: 86px;
+          min-height: 86px;
+          max-width: 86px;
+          max-height: 86px;
           font-size: 32px;
       }
   
