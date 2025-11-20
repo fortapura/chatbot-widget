@@ -9,6 +9,21 @@
         this.apiEndpoint = options.apiEndpoint || 'https://chatbot-cloud-backend.onrender.com/v1';
         this.sessionId = this.generateSessionId();
         
+        // Store custom parameters for demo mode (these will override database values)
+        // Supported demo parameters:
+        // - primary_color: Hex color code (e.g., '#4A90E2')
+        // - secondary_color: Hex color code (e.g., '#2E3440')
+        // - client_name: Client/business name (will be used to set assistant_name if not provided)
+        // - assistant_name: Assistant name (overrides client_name-based default)
+        // - knowledge_base_json: Custom knowledge base JSON object (includes opening hours, services, etc.)
+        this.customParams = {
+          primary_color: options.primary_color,
+          secondary_color: options.secondary_color,
+          client_name: options.client_name || options.business_name, // Support both for backward compatibility
+          assistant_name: options.assistant_name || ((options.client_name || options.business_name) ? `${options.client_name || options.business_name} Assistant` : null),
+          knowledge_base_json: options.knowledge_base_json
+        };
+        
         // Fetch client configuration
         this.fetchConfig().then(() => {
           this.injectStyles();
@@ -36,6 +51,24 @@
           }
         });
         this.config = await response.json();
+        
+        // Merge custom parameters (override database values)
+        if (this.customParams.primary_color) {
+          this.config.primary_color = this.customParams.primary_color;
+        }
+        if (this.customParams.secondary_color) {
+          this.config.secondary_color = this.customParams.secondary_color;
+        }
+        if (this.customParams.assistant_name) {
+          this.config.assistant_name = this.customParams.assistant_name;
+        }
+        if (this.customParams.client_name) {
+          this.config.client_name = this.customParams.client_name;
+        }
+        // Store knowledge_base_json separately (not part of config response, but needed for chat)
+        if (this.customParams.knowledge_base_json) {
+          this.config.knowledge_base_json = this.customParams.knowledge_base_json;
+        }
       },
   
       injectStyles: function() {
@@ -1460,16 +1493,23 @@
   
       // Send to backend with minimal delay for typing effect
       setTimeout(() => {
+          const requestBody = {
+              message: message,
+              session_id: ChatbotWidget.sessionId
+          };
+          
+          // Include custom knowledge_base_json if provided (for demo mode)
+          if (ChatbotWidget.config && ChatbotWidget.config.knowledge_base_json) {
+              requestBody.knowledge_base_json = ChatbotWidget.config.knowledge_base_json;
+          }
+          
           fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
                   'Authorization': `Bearer ${ChatbotWidget.apiKey}`
               },
-              body: JSON.stringify({
-                  message: message,
-                  session_id: ChatbotWidget.sessionId
-              })
+              body: JSON.stringify(requestBody)
           })
           .then(response => {
               return response.json().then(json => ({
