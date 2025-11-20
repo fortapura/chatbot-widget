@@ -9,19 +9,12 @@
         this.apiEndpoint = options.apiEndpoint || 'https://chatbot-cloud-backend.onrender.com/v1';
         this.sessionId = this.generateSessionId();
         
-        // Store custom parameters for demo mode (these will override database values)
-        // Supported demo parameters:
-        // - primary_color: Hex color code (e.g., '#4A90E2')
-        // - secondary_color: Hex color code (e.g., '#2E3440')
-        // - client_name: Client/business name (does NOT override assistant_name unless explicitly set)
-        // - assistant_name: Assistant name (only set if explicitly provided)
-        // - knowledge_base_json: Custom knowledge base JSON object (includes opening hours, services, etc.)
-        this.customParams = {
-          primary_color: options.primary_color,
-          secondary_color: options.secondary_color,
-          client_name: options.client_name || options.business_name, // Support both for backward compatibility
-          assistant_name: options.assistant_name || null, // Only override if explicitly provided
-          knowledge_base_json: options.knowledge_base_json
+        // Store demo parameters if provided
+        this.demoParams = {
+          primaryColor: options.primaryColor || null,
+          secondaryColor: options.secondaryColor || null,
+          businessName: options.businessName || null,
+          knowledgeBase: options.knowledgeBase || null
         };
         
         // Fetch client configuration
@@ -45,31 +38,35 @@
       },
   
       fetchConfig: async function() {
-        const response = await fetch(`${this.apiEndpoint}/config`, {
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`
-          }
-        });
-        this.config = await response.json();
+        // Build request body with demo parameters if provided
+        const requestBody = {};
+        if (this.demoParams.primaryColor) {
+          requestBody.primary_color = this.demoParams.primaryColor;
+        }
+        if (this.demoParams.secondaryColor) {
+          requestBody.secondary_color = this.demoParams.secondaryColor;
+        }
+        if (this.demoParams.businessName) {
+          requestBody.business_name = this.demoParams.businessName;
+        }
+        if (this.demoParams.knowledgeBase) {
+          requestBody.knowledge_base = this.demoParams.knowledgeBase;
+        }
         
-        // Merge custom parameters (override database values)
-        if (this.customParams.primary_color) {
-          this.config.primary_color = this.customParams.primary_color;
+        const fetchOptions = {
+          method: Object.keys(requestBody).length > 0 ? 'POST' : 'GET',
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json'
+          }
+        };
+        
+        if (Object.keys(requestBody).length > 0) {
+          fetchOptions.body = JSON.stringify(requestBody);
         }
-        if (this.customParams.secondary_color) {
-          this.config.secondary_color = this.customParams.secondary_color;
-        }
-        // Only override assistant_name if explicitly provided (don't auto-generate from client_name)
-        if (this.customParams.assistant_name !== null && this.customParams.assistant_name !== undefined) {
-          this.config.assistant_name = this.customParams.assistant_name;
-        }
-        if (this.customParams.client_name) {
-          this.config.client_name = this.customParams.client_name;
-        }
-        // Store knowledge_base_json separately (not part of config response, but needed for chat)
-        if (this.customParams.knowledge_base_json) {
-          this.config.knowledge_base_json = this.customParams.knowledge_base_json;
-        }
+        
+        const response = await fetch(`${this.apiEndpoint}/config`, fetchOptions);
+        this.config = await response.json();
       },
   
       injectStyles: function() {
@@ -1494,14 +1491,15 @@
   
       // Send to backend with minimal delay for typing effect
       setTimeout(() => {
+          // Build request body
           const requestBody = {
               message: message,
               session_id: ChatbotWidget.sessionId
           };
           
-          // Include custom knowledge_base_json if provided (for demo mode)
-          if (ChatbotWidget.config && ChatbotWidget.config.knowledge_base_json) {
-              requestBody.knowledge_base_json = ChatbotWidget.config.knowledge_base_json;
+          // Include demo knowledge base key if available
+          if (ChatbotWidget.config && ChatbotWidget.config.demo_kb_key) {
+              requestBody.demo_kb_key = ChatbotWidget.config.demo_kb_key;
           }
           
           fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
