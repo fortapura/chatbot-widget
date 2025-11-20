@@ -13,14 +13,14 @@
         // Supported demo parameters:
         // - primary_color: Hex color code (e.g., '#4A90E2')
         // - secondary_color: Hex color code (e.g., '#2E3440')
-        // - client_name: Client/business name (will be used to set assistant_name if not provided)
-        // - assistant_name: Assistant name (overrides client_name-based default)
+        // - client_name: Client/business name (does NOT override assistant_name unless explicitly set)
+        // - assistant_name: Assistant name (only set if explicitly provided)
         // - knowledge_base_json: Custom knowledge base JSON object (includes opening hours, services, etc.)
         this.customParams = {
           primary_color: options.primary_color,
           secondary_color: options.secondary_color,
           client_name: options.client_name || options.business_name, // Support both for backward compatibility
-          assistant_name: options.assistant_name || ((options.client_name || options.business_name) ? `${options.client_name || options.business_name} Assistant` : null),
+          assistant_name: options.assistant_name || null, // Only override if explicitly provided
           knowledge_base_json: options.knowledge_base_json
         };
         
@@ -59,7 +59,8 @@
         if (this.customParams.secondary_color) {
           this.config.secondary_color = this.customParams.secondary_color;
         }
-        if (this.customParams.assistant_name) {
+        // Only override assistant_name if explicitly provided (don't auto-generate from client_name)
+        if (this.customParams.assistant_name !== null && this.customParams.assistant_name !== undefined) {
           this.config.assistant_name = this.customParams.assistant_name;
         }
         if (this.customParams.client_name) {
