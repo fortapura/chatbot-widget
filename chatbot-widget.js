@@ -17,12 +17,20 @@
           knowledgeBase: options.knowledgeBase || null
         };
         
-        // Fetch client configuration
+        // Fetch client configuration with error handling
         this.fetchConfig().then(() => {
           this.injectStyles();
           this.injectHTML();
           this.updateAssistantName();
           // Apply filled icon after HTML is injected
+          this.applyIcon();
+        }).catch((error) => {
+          // If config fetch fails, use fallback defaults and still initialize chatbot
+          console.warn('Failed to fetch chatbot config, using defaults:', error);
+          this.config = this.getDefaultConfig();
+          this.injectStyles();
+          this.injectHTML();
+          this.updateAssistantName();
           this.applyIcon();
         });
       },
@@ -91,17 +99,17 @@
                     box-shadow: 0 8px 24px color-mix(in srgb, ${this.config.primary_color} 50%, black)99;
                     cursor: pointer;
                     z-index: 1000;
-                    width: 97px;
-                    height: 97px;
-                    min-width: 97px;
-                    min-height: 97px;
-                    max-width: 97px;
-                    max-height: 97px;
-                    box-sizing: border-box;
+                    width: 97px !important;
+                    height: 97px !important;
+                    min-width: 97px !important;
+                    min-height: 97px !important;
+                    max-width: 97px !important;
+                    max-height: 97px !important;
+                    box-sizing: border-box !important;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    flex-shrink: 0;
+                    flex-shrink: 0 !important;
                     font-size: 38px;
                     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
                     border: none;
@@ -202,6 +210,7 @@
       font-family: 'Roboto', sans-serif;
       backdrop-filter: blur(10px);
       border: 1px solid color-mix(in srgb, ${this.config.primary_color} 50%, black)1a;
+      flex-direction: column;
   }
 
   #fortapura-chat-header {
@@ -215,6 +224,7 @@
       font-weight: 500;
       position: relative;
       box-shadow: 0 4px 12px color-mix(in srgb, ${this.config.primary_color} 50%, black)33;
+      flex-shrink: 0;
   }
   
   .fortapura-header-actions-left,
@@ -301,7 +311,7 @@
   .fortapura-menu-dropdown.fortapura-show {
       opacity: 1;
       transform: translateY(0) scale(1);
-      display: block;
+      display: block !important;
   }
   
   .fortapura-menu-item {
@@ -326,7 +336,7 @@
   
   #fortapura-chat-window {
       flex: 1;
-      max-height: 400px;
+      min-height: 0;
       overflow-y: auto;
       padding: 20px;
       background: white;
@@ -356,6 +366,7 @@
       background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
       align-items: center;
       box-shadow: 0 -4px 12px color-mix(in srgb, ${this.config.secondary_color} 10%, transparent);
+      flex-shrink: 0;
   }
   
   #fortapura-userInput {
@@ -653,28 +664,31 @@
   }
   
   @media (max-width: 768px) {
-  #fortapura-chat-container {
+      #fortapura-chat-container {
           width: 95%;
           max-width: 340px;
           right: 2.5%;
           bottom: 16px;
           max-height: 80vh;
+          display: flex;
+          flex-direction: column;
       }
   
       #fortapura-chat-button {
           bottom: 16px;
           right: 16px;
-          width: 86px;
-          height: 86px;
-          min-width: 86px;
-          min-height: 86px;
-          max-width: 86px;
-          max-height: 86px;
+          width: 86px !important;
+          height: 86px !important;
+          min-width: 86px !important;
+          min-height: 86px !important;
+          max-width: 86px !important;
+          max-height: 86px !important;
           font-size: 32px;
       }
   
       #fortapura-chat-header {
           padding: 16px;
+          flex-shrink: 0;
       }
   
       .fortapura-header-btn {
@@ -685,12 +699,14 @@
   
       #fortapura-chat-window {
           padding: 16px;
-          max-height: 300px;
+          flex: 1;
+          min-height: 0;
       }
   
       #fortapura-chat-input-container {
           padding: 16px;
           gap: 8px;
+          flex-shrink: 0;
       }
   
       #fortapura-userInput {
@@ -888,7 +904,7 @@
         }, 500); // Wait 500ms for Font Awesome to load
       },
       
-        // Chat button icon - filled message circle with three holes
+      // Chat button icon - filled message circle with three holes
       chatButtonIcon: '<svg width="38" height="38" viewBox="0 0 24 24" fill="none"><defs><mask id="chatBubbleMask"><rect width="24" height="24" fill="white"/><circle cx="9" cy="12" r="1.5" fill="black"/><circle cx="12.5" cy="12" r="1.5" fill="black"/><circle cx="16" cy="12" r="1.5" fill="black"/></mask></defs><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" fill="currentColor" mask="url(#chatBubbleMask)"/></svg>',
       
       // Apply the filled message circle icon
@@ -1077,7 +1093,7 @@
       if (!chatContainer || !chatContainer.style) return;
       
       const isOpening = chatContainer.style.display === 'none';
-      chatContainer.style.display = isOpening ? 'block' : 'none';
+      chatContainer.style.display = isOpening ? 'flex' : 'none';
       if (isOpening) {
           isChatProcessing = true;
           // Disable chat button visually
