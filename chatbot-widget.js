@@ -1532,17 +1532,38 @@
                   data: json
               }));
           })
-          .then(({ok, data}) => {
+          .then(async ({ok, data}) => {
               if (!ok) {
                   throw data;
               }
               removeTypingIndicator();
-              addBotMessage(data.reply);
+              
+              // Handle multiple replies (array) or fallback to single reply
+              const replies = data.replies || (data.reply ? [data.reply] : []);
+              
+              // Display each reply as a separate message with a delay between them
+              for (let i = 0; i < replies.length; i++) {
+                  if (i > 0) {
+                      // Show typing indicator between messages for natural feel
+                      showTypingIndicator();
+                      await delay(800);  // 800ms delay between messages
+                      removeTypingIndicator();
+                      await delay(200);  // Small pause after removing typing
+                  }
+                  addBotMessage(replies[i]);
+              }
+              
               hasAIInteraction = true;
           })
           .catch(error => {
               removeTypingIndicator();
-              addBotMessage(error.reply || error.error || 'Sorry, something went wrong. Please try again.');
+              // Handle error replies (could also be an array)
+              const errorReplies = error.replies || (error.reply ? [error.reply] : null);
+              if (errorReplies) {
+                  errorReplies.forEach(reply => addBotMessage(reply));
+              } else {
+                  addBotMessage(error.error || 'Sorry, something went wrong. Please try again.');
+              }
           });
       }, 200);  // Reduced delay for faster response
   
