@@ -14,6 +14,8 @@
           primaryColor: options.primaryColor || null,
           secondaryColor: options.secondaryColor || null,
           businessName: options.businessName || null,
+          assistantName: options.assistant_name || options.botName || null,
+          assistantAvatarUrl: options.assistant_avatar_url || options.botAvatar || null,
           knowledgeBase: options.knowledgeBase || null
         };
         
@@ -56,6 +58,12 @@
         }
         if (this.demoParams.businessName) {
           requestBody.business_name = this.demoParams.businessName;
+        }
+        if (this.demoParams.assistantName) {
+          requestBody.assistant_name = this.demoParams.assistantName;
+        }
+        if (this.demoParams.assistantAvatarUrl) {
+          requestBody.assistant_avatar_url = this.demoParams.assistantAvatarUrl;
         }
         if (this.demoParams.knowledgeBase) {
           requestBody.knowledge_base = this.demoParams.knowledgeBase;
