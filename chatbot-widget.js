@@ -978,12 +978,7 @@
       }
     };
   
-    // Get info responses from config (fallback to empty object if not provided)
-    function getInfoResponses() {
-      return ChatbotWidget.config?.info_responses || {};
-    }
-  
-    let hasAIInteraction = false;
+  let hasAIInteraction = false;
     // Global variable to track current section
     let currentSection = 'welcome';
   
@@ -1065,8 +1060,8 @@
   };
   
   const originalAddOptionButton = window.addOptionButton;
-  window.addOptionButton = function(sectionId, text) {
-      originalAddOptionButton(sectionId, text);
+  window.addOptionButton = function(sectionId, text, funnelContext = null) {
+      originalAddOptionButton(sectionId, text, funnelContext);
       setTimeout(scrollToBottom, 100);
   };
   
@@ -1280,11 +1275,14 @@
                   removeTypingIndicator();
                   await delay(300);
                   const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
-                  addBotMessage(`Hello! I'm ${assistantName}, your AI assistant. How can I help?`);
+                  const businessName = ChatbotWidget.config?.business_name || '';
+                  const businessText = businessName ? ` from ${businessName}` : '';
+                  addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
                   const welcomeOptions = getWelcomeOptions();
                   for (let option of welcomeOptions) {
                       await delay(250);
-                      addOptionButton(option.id, option.text);
+                      // Pass funnel_context if it exists in the option
+                      addOptionButton(option.id, option.text, option.funnel_context || null);
                   }
                   await delay(150);
                   addBotMessage('Or type a request to begin a chat');
@@ -1302,10 +1300,13 @@
                   // Rebuild full welcome if no greeting or buttons (since cleared on section nav)
                   if (!chatWindow.querySelector('.fortapura-message') || !chatWindow.querySelector('.fortapura-option-btn')) {
                       const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
-                      addBotMessage(`Hello! I'm ${assistantName}, your AI assistant. How can I help?`);
+                      const businessName = ChatbotWidget.config?.business_name || '';
+                      const businessText = businessName ? ` from ${businessName}` : '';
+                      addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
                       const welcomeOptions = getWelcomeOptions();
                       for (let option of welcomeOptions) {
-                          addOptionButton(option.id, option.text);
+                          // Pass funnel_context if it exists in the option
+                          addOptionButton(option.id, option.text, option.funnel_context || null);
                       }
                       addBotMessage('Or type a request to begin a chat');
                   }
@@ -1350,23 +1351,15 @@
         window.open('https://www.fortapura.com/about', '_blank');
           return;  // No further processing
       } else {
-          // Predefined sections (faq, contact, etc.) - "Open new space" by clearing window
+          // Unknown section - this shouldn't happen if welcome options are properly configured
+          // Most options should either have a funnel_context (handled by funnel system) 
+          // or be a built-in section (ai-chat, report-issue, contact-form)
           if (chatWindow) {
               chatWindow.innerHTML = '';
           }
-          // Remove option buttons (already cleared)
-          const infoResponses = getInfoResponses();
-          const responseText = infoResponses[sectionId];
-          if (responseText) {
-              addBotMessage(responseText, true);  // Mark as section response
-          } else {
-              addBotMessage('Sorry, this section is not available.', true);
-          }
+          addBotMessage('Sorry, this section is not available. Please try another option or start a general chat.', true);
           if (backBtn) {
               backBtn.style.display = 'block';
-          }
-          if (sectionId === 'contact') {
-              submitContactForm();
           }
           if (chatWindow) {
               chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -1419,15 +1412,26 @@
   }
   
   // Helper to add option button
-  function addOptionButton(sectionId, text) {
+  function addOptionButton(sectionId, text, funnelContext = null) {
       const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const optionBtn = document.createElement('button');
       optionBtn.classList.add('fortapura-option-btn');
       optionBtn.innerHTML = text;
-      // Updated onclick: pass false for non-fresh (back nav)
-      optionBtn.onclick = () => showSection(sectionId, false);
+      // Updated onclick: if funnelContext is provided, start AI chat with context
+      // Otherwise, navigate to the specified section
+      optionBtn.onclick = () => {
+          if (funnelContext) {
+              // Store funnel context for this session
+              sessionStorage.setItem('chatbot_funnel_context', funnelContext);
+              // Transition to AI chat with funnel context
+              showSection('ai-chat', false);
+          } else {
+              // Traditional section navigation
+              showSection(sectionId, false);
+          }
+      };
       chatWindow.appendChild(optionBtn);
       chatWindow.scrollTop = chatWindow.scrollHeight;
   }
@@ -1524,6 +1528,14 @@
           // Include demo knowledge base key if available
           if (ChatbotWidget.config && ChatbotWidget.config.demo_kb_key) {
               requestBody.demo_kb_key = ChatbotWidget.config.demo_kb_key;
+          }
+          
+          // Include funnel context if available (only on first message)
+          const funnelContext = sessionStorage.getItem('chatbot_funnel_context');
+          if (funnelContext) {
+              requestBody.funnel_context = funnelContext;
+              // Clear it after first use so it doesn't apply to subsequent messages
+              sessionStorage.removeItem('chatbot_funnel_context');
           }
           
           fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
