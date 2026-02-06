@@ -796,7 +796,7 @@
                   <button id="fortapura-menu-btn" class="fortapura-header-btn" title="More Options">
                       <i class="fas fa-ellipsis-v"></i>
                   </button>
-                  <button id="fortapura-back-btn" class="fortapura-header-btn fortapura-back-btn" style="display: none;" onclick="showSection('welcome')" title="Back to Welcome">
+                  <button id="fortapura-back-btn" class="fortapura-header-btn fortapura-back-btn" style="display: none;" onclick="navigateBackInFunnel()" title="Back">
                       <i class="fas fa-arrow-left"></i>
                   </button>
               </div>
@@ -981,8 +981,12 @@
   let hasAIInteraction = false;
     // Global variable to track current section
     let currentSection = 'welcome';
-  
+
     let isChatProcessing = false;
+    
+    // Multi-layer funnel navigation state
+    let funnelNavigationPath = []; // Stack to track navigation through funnel layers
+    let currentFunnelOptions = null; // Current layer's options
   
     // Maximum character limit for user messages
     const MAX_USER_MESSAGE_LENGTH = 1000;
@@ -1255,6 +1259,46 @@
     return ChatbotWidget.config?.welcome_options || [];
   }
   
+  // Get options at a specific path in the funnel hierarchy
+  function getOptionsAtPath(path) {
+    if (!path || path.length === 0) {
+      return getWelcomeOptions();
+    }
+    
+    let options = getWelcomeOptions();
+    for (let i = 0; i < path.length; i++) {
+      const optionId = path[i];
+      const option = options.find(opt => opt.id === optionId);
+      if (!option || !option.sub_options) {
+        return [];
+      }
+      options = option.sub_options;
+    }
+    return options;
+  }
+  
+  // Get the current option object based on navigation path
+  function getCurrentFunnelOption() {
+    if (funnelNavigationPath.length === 0) {
+      return null;
+    }
+    
+    let options = getWelcomeOptions();
+    let currentOption = null;
+    
+    for (let i = 0; i < funnelNavigationPath.length; i++) {
+      const optionId = funnelNavigationPath[i];
+      currentOption = options.find(opt => opt.id === optionId);
+      if (!currentOption) {
+        return null;
+      }
+      if (currentOption.sub_options && i < funnelNavigationPath.length - 1) {
+        options = currentOption.sub_options;
+      }
+    }
+    return currentOption;
+  }
+  
   // Show specific section
   async function showSection(sectionId, isFresh = false, isFunnelInitiated = false) {
       currentSection = sectionId;
@@ -1262,9 +1306,17 @@
       const backBtn = document.getElementById('fortapura-back-btn');
 
       if (sectionId === 'welcome') {
-          if (backBtn) {
-              backBtn.style.display = 'none';
+          // Reset funnel navigation when returning to welcome
+          if (isFresh) {
+              funnelNavigationPath = [];
+              currentFunnelOptions = null;
           }
+          
+          // Show back button if we're in a funnel sub-layer
+          if (backBtn) {
+              backBtn.style.display = funnelNavigationPath.length > 0 ? 'block' : 'none';
+          }
+          
           if (isFresh) {
               // Fresh open: clear and build full welcome
               if (chatWindow) {
@@ -1278,11 +1330,11 @@
                   const businessName = ChatbotWidget.config?.business_name || '';
                   const businessText = businessName ? ` from ${businessName}` : '';
                   addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
-                  const welcomeOptions = getWelcomeOptions();
+                  const welcomeOptions = getOptionsAtPath(funnelNavigationPath);
                   for (let option of welcomeOptions) {
                       await delay(250);
-                      // Pass funnel_context and initial_response if they exist in the option
-                      addOptionButton(option.id, option.text, option.funnel_context || null, option.initial_response || null);
+                      // Pass the full option object to button handler
+                      addOptionButton(option.id, option.text, option.funnel_context || null, option.initial_response || null, option.sub_options || null);
                   }
                   await delay(150);
                   addBotMessage('Or type a request to begin a chat');
@@ -1291,7 +1343,7 @@
                   }
               }, 800);
           } else {
-              // Back navigation: remove section response if present
+              // Back navigation or refresh: remove section response if present
               if (chatWindow) {
                   const sectionMsg = chatWindow.querySelector('.fortapura-section-response');
                   if (sectionMsg) {
@@ -1303,10 +1355,10 @@
                       const businessName = ChatbotWidget.config?.business_name || '';
                       const businessText = businessName ? ` from ${businessName}` : '';
                       addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
-                      const welcomeOptions = getWelcomeOptions();
+                      const welcomeOptions = getOptionsAtPath(funnelNavigationPath);
                       for (let option of welcomeOptions) {
-                          // Pass funnel_context and initial_response if they exist in the option
-                          addOptionButton(option.id, option.text, option.funnel_context || null, option.initial_response || null);
+                          // Pass the full option object to button handler
+                          addOptionButton(option.id, option.text, option.funnel_context || null, option.initial_response || null, option.sub_options || null);
                       }
                       addBotMessage('Or type a request to begin a chat');
                   }
@@ -1437,17 +1489,68 @@
   }
   
   // Helper to add option button
-  function addOptionButton(sectionId, text, funnelContext = null, initialResponse = null) {
+  function addOptionButton(sectionId, text, funnelContext = null, initialResponse = null, subOptions = null) {
       const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const optionBtn = document.createElement('button');
       optionBtn.classList.add('fortapura-option-btn');
       optionBtn.innerHTML = text;
-      // Updated onclick: if funnelContext is provided, start AI chat with context
-      // Otherwise, navigate to the specified section
-      optionBtn.onclick = () => {
-          if (funnelContext) {
+      
+      // Enhanced onclick: handle multi-layer navigation
+      optionBtn.onclick = async () => {
+          // If this option has sub-options, navigate to next layer
+          if (subOptions && Array.isArray(subOptions) && subOptions.length > 0) {
+              // Add this option to navigation path
+              funnelNavigationPath.push(sectionId);
+              
+              // Clear current view
+              if (chatWindow) {
+                  chatWindow.innerHTML = '';
+              }
+              
+              // Show typing indicator
+              showTypingIndicator();
+              
+              setTimeout(async () => {
+                  removeTypingIndicator();
+                  await delay(300);
+                  
+                  // Show breadcrumb message
+                  const breadcrumb = funnelNavigationPath.map(id => {
+                      const opt = findOptionById(id);
+                      return opt ? opt.text : id;
+                  }).join(' → ');
+                  addBotMessage(`You selected: <strong>${breadcrumb}</strong><br><br>Please choose from the following options:`);
+                  
+                  // Display sub-options
+                  for (let subOption of subOptions) {
+                      await delay(250);
+                      addOptionButton(
+                          subOption.id, 
+                          subOption.text, 
+                          subOption.funnel_context || null, 
+                          subOption.initial_response || null,
+                          subOption.sub_options || null
+                      );
+                  }
+                  
+                  await delay(150);
+                  addBotMessage('Or type a request to begin a chat');
+                  
+                  // Show back button
+                  const backBtn = document.getElementById('fortapura-back-btn');
+                  if (backBtn) {
+                      backBtn.style.display = 'block';
+                  }
+                  
+                  if (chatWindow) {
+                      chatWindow.scrollTop = chatWindow.scrollHeight;
+                  }
+              }, 500);
+              
+          } else if (funnelContext) {
+              // Leaf node with funnel context - start AI chat
               // Store funnel context for when user sends their first actual message
               sessionStorage.setItem('chatbot_funnel_context', funnelContext);
               
@@ -1459,12 +1562,102 @@
               // Transition to AI chat with funnel context
               showSection('ai-chat', false, true); // Pass true to indicate funnel-initiated
           } else {
-              // Traditional section navigation
+              // Traditional section navigation (no funnel context, no sub-options)
               showSection(sectionId, false);
           }
       };
       chatWindow.appendChild(optionBtn);
       chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+  
+  // Helper function to find an option by ID across all layers
+  function findOptionById(optionId, options = null) {
+      if (!options) {
+          options = getWelcomeOptions();
+      }
+      
+      for (let option of options) {
+          if (option.id === optionId) {
+              return option;
+          }
+          if (option.sub_options) {
+              const found = findOptionById(optionId, option.sub_options);
+              if (found) {
+                  return found;
+              }
+          }
+      }
+      return null;
+  }
+  
+  // Navigate back up one level in the funnel hierarchy
+  async function navigateBackInFunnel() {
+      const chatWindow = document.getElementById('fortapura-chat-window');
+      const backBtn = document.getElementById('fortapura-back-btn');
+      
+      if (!chatWindow) return;
+      
+      // If we're in a funnel layer, go back one level
+      if (funnelNavigationPath.length > 0) {
+          // Remove last item from path
+          funnelNavigationPath.pop();
+          
+          // Clear window
+          chatWindow.innerHTML = '';
+          
+          // Show typing indicator
+          showTypingIndicator();
+          
+          setTimeout(async () => {
+              removeTypingIndicator();
+              await delay(300);
+              
+              // Get options at current path level
+              const optionsToShow = getOptionsAtPath(funnelNavigationPath);
+              
+              if (funnelNavigationPath.length === 0) {
+                  // Back to root welcome
+                  const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
+                  const businessName = ChatbotWidget.config?.business_name || '';
+                  const businessText = businessName ? ` from ${businessName}` : '';
+                  addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
+              } else {
+                  // Show breadcrumb for current level
+                  const breadcrumb = funnelNavigationPath.map(id => {
+                      const opt = findOptionById(id);
+                      return opt ? opt.text : id;
+                  }).join(' → ');
+                  addBotMessage(`You're viewing: <strong>${breadcrumb}</strong><br><br>Please choose from the following options:`);
+              }
+              
+              // Display options at this level
+              for (let option of optionsToShow) {
+                  await delay(250);
+                  addOptionButton(
+                      option.id, 
+                      option.text, 
+                      option.funnel_context || null, 
+                      option.initial_response || null,
+                      option.sub_options || null
+                  );
+              }
+              
+              await delay(150);
+              addBotMessage('Or type a request to begin a chat');
+              
+              // Update back button visibility
+              if (backBtn) {
+                  backBtn.style.display = funnelNavigationPath.length > 0 ? 'block' : 'none';
+              }
+              
+              if (chatWindow) {
+                  chatWindow.scrollTop = chatWindow.scrollHeight;
+              }
+          }, 500);
+      } else {
+          // Already at root, just refresh welcome
+          showSection('welcome', false);
+      }
   }
   
   // Show typing indicator
@@ -1776,7 +1969,12 @@
       }
       currentSection = 'welcome';
       hasAIInteraction = false;
-      showSection('welcome');
+      
+      // Reset funnel navigation state
+      funnelNavigationPath = [];
+      currentFunnelOptions = null;
+      
+      showSection('welcome', true); // Pass true to indicate fresh start
   }
   
   // Report Form Submission
@@ -1941,4 +2139,5 @@
     window.showSection = showSection;
     window.toggleMenu = toggleMenu;
     window.debouncedSendMessage = debouncedSendMessage;
+    window.navigateBackInFunnel = navigateBackInFunnel;
   })();
