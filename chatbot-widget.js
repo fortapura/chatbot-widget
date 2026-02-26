@@ -1583,24 +1583,52 @@
           // Handle multiple replies (array) or fallback to single reply
           const replies = data.replies || (data.reply ? [data.reply] : []);
           
-          // Display each reply as a separate message with reduced delays for faster response
+          // Display each reply as a separate message
+          // First message: no delay, subsequent messages: small delay
+          let firstMessageElement = null;
           for (let i = 0; i < replies.length; i++) {
               if (i > 0) {
                   // Show typing indicator between messages for natural feel
                   showTypingIndicator();
-                  await delay(300);  // Reduced from 800ms to 300ms for faster response
+                  await delay(300);  // Small delay between messages
                   removeTypingIndicator();
-                  await delay(50);  // Reduced from 200ms to 50ms
+                  await delay(50);  // Small pause after removing typing
               }
-              // Scroll first message to top of visible window, others follow normally
-              addBotMessage(replies[i], false, i === 0 && replies.length > 1);
-              if (i < replies.length - 1) {
-                  await delay(100);  // Reduced from 300ms to 100ms
+              // Add message and store reference to first one
+              const chatWindow = document.getElementById('fortapura-chat-window');
+              if (chatWindow && i === 0) {
+                  // Store current number of bot messages before adding
+                  const beforeCount = chatWindow.querySelectorAll('.fortapura-bot').length;
+                  addBotMessage(replies[i], false, false);
+                  // Get the first message we just added
+                  await delay(10);  // Tiny delay to ensure DOM update
+                  const botMessages = chatWindow.querySelectorAll('.fortapura-bot');
+                  if (botMessages.length > beforeCount) {
+                      firstMessageElement = botMessages[beforeCount];
+                  }
+              } else {
+                  addBotMessage(replies[i], false, false);
+              }
+              // Small delay after adding message (except for first message)
+              if (i > 0 && i < replies.length - 1) {
+                  await delay(100);
+              }
+          }
+          
+          // After all messages are added, scroll first message to top if multiple messages
+          if (replies.length > 1 && firstMessageElement) {
+              await delay(50);  // Small delay to ensure all messages are rendered
+              const chatWindow = document.getElementById('fortapura-chat-window');
+              if (chatWindow && firstMessageElement) {
+                  // Use getBoundingClientRect for accurate positioning
+                  const chatRect = chatWindow.getBoundingClientRect();
+                  const msgRect = firstMessageElement.getBoundingClientRect();
+                  const relativeTop = msgRect.top - chatRect.top + chatWindow.scrollTop;
+                  chatWindow.scrollTop = Math.max(0, relativeTop - 20);
               }
           }
           
           hasAIInteraction = true;
-          // Don't scroll to bottom after adding messages - first message should stay at top
       })
       .catch(error => {
           removeTypingIndicator();
@@ -1692,25 +1720,54 @@
           // Handle multiple replies (array) or fallback to single reply
           const replies = data.replies || (data.reply ? [data.reply] : []);
           
-          // Display each reply as a separate message with reduced delays for faster response
+          // Display each reply as a separate message
+          // First message: no delay, subsequent messages: small delay
+          let firstMessageElement = null;
           for (let i = 0; i < replies.length; i++) {
               if (i > 0) {
                   // Show typing indicator between messages for natural feel
                   showTypingIndicator();
-                  await delay(300);  // Reduced from 800ms to 300ms for faster response
+                  await delay(300);  // Small delay between messages
                   removeTypingIndicator();
-                  await delay(50);  // Reduced from 200ms to 50ms
+                  await delay(50);  // Small pause after removing typing
               }
-              // Scroll first message to top of visible window, others follow normally
-              addBotMessage(replies[i], false, i === 0 && replies.length > 1);
-              if (i < replies.length - 1) {
-                  await delay(100);  // Reduced delay between messages
+              // Add message and store reference to first one
+              const chatWindow = document.getElementById('fortapura-chat-window');
+              if (chatWindow && i === 0) {
+                  // Store current number of bot messages before adding
+                  const beforeCount = chatWindow.querySelectorAll('.fortapura-bot').length;
+                  addBotMessage(replies[i], false, false);
+                  // Get the first message we just added
+                  await delay(10);  // Tiny delay to ensure DOM update
+                  const botMessages = chatWindow.querySelectorAll('.fortapura-bot');
+                  if (botMessages.length > beforeCount) {
+                      firstMessageElement = botMessages[beforeCount];
+                  }
+              } else {
+                  addBotMessage(replies[i], false, false);
+              }
+              // Small delay after adding message (except for first message)
+              if (i > 0 && i < replies.length - 1) {
+                  await delay(100);
+              }
+          }
+          
+          // After all messages are added, scroll first message to top if multiple messages
+          if (replies.length > 1 && firstMessageElement) {
+              await delay(50);  // Small delay to ensure all messages are rendered
+              const chatWindow = document.getElementById('fortapura-chat-window');
+              if (chatWindow && firstMessageElement) {
+                  // Use getBoundingClientRect for accurate positioning
+                  const chatRect = chatWindow.getBoundingClientRect();
+                  const msgRect = firstMessageElement.getBoundingClientRect();
+                  const relativeTop = msgRect.top - chatRect.top + chatWindow.scrollTop;
+                  chatWindow.scrollTop = Math.max(0, relativeTop - 20);
               }
           }
           
           hasAIInteraction = true;
-      })
-      .catch(async (error) => {
+          })
+          .catch(async (error) => {
           removeTypingIndicator();
           // Handle error replies (could also be an array)
           const errorReplies = error.replies || (error.reply ? [error.reply] : null);
