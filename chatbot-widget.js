@@ -208,7 +208,7 @@
       bottom: 137px;
       right: 24px;
       width: 360px;
-      max-height: calc(70vh - 137px);
+      max-height: 70vh;
       background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
       border-radius: 20px;
       box-shadow: 0 16px 48px color-mix(in srgb, ${this.config.primary_color} 50%, black)33;
