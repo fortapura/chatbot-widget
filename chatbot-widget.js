@@ -205,10 +205,10 @@
   
   #fortapura-chat-container {
       position: fixed;
-      bottom: 96px;
+      bottom: 137px;
       right: 24px;
       width: 360px;
-      max-height: 70vh;
+      max-height: calc(70vh - 137px);
       background: color-mix(in srgb, ${this.config.secondary_color} 5%, white);
       border-radius: 20px;
       box-shadow: 0 16px 48px color-mix(in srgb, ${this.config.primary_color} 50%, black)33;
@@ -796,7 +796,7 @@
                   <button id="fortapura-menu-btn" class="fortapura-header-btn" title="More Options">
                       <i class="fas fa-ellipsis-v"></i>
                   </button>
-                  <button id="fortapura-back-btn" class="fortapura-header-btn fortapura-back-btn" style="display: none;" onclick="navigateBack()" title="Back">
+                  <button id="fortapura-back-btn" class="fortapura-header-btn fortapura-back-btn" style="display: none;" onclick="showSection('welcome')" title="Back to Welcome">
                       <i class="fas fa-arrow-left"></i>
                   </button>
               </div>
@@ -981,12 +981,8 @@
   let hasAIInteraction = false;
     // Global variable to track current section
     let currentSection = 'welcome';
-
+  
     let isChatProcessing = false;
-
-    // Track the current funnel path for multi-layer navigation
-    let funnelPath = [];
-    let funnelContextAccumulator = [];
   
     // Maximum character limit for user messages
     const MAX_USER_MESSAGE_LENGTH = 1000;
@@ -1081,68 +1077,6 @@
       }
       scrollToBottom();
   };
-  
-  // Navigate back through funnel layers
-  function navigateBack() {
-      const chatWindow = document.getElementById('fortapura-chat-window');
-      if (!chatWindow) return;
-      
-      if (funnelPath.length > 0) {
-          // Go back one level in the funnel
-          funnelPath.pop();
-          funnelContextAccumulator.pop();
-          
-          // Clear the chat window
-          chatWindow.innerHTML = '';
-          
-          // Show typing indicator
-          showTypingIndicator();
-          setTimeout(async () => {
-              removeTypingIndicator();
-              await delay(300);
-              
-              // Display message based on level
-              if (funnelPath.length > 0) {
-                  addBotMessage('What would you like to explore?');
-              } else {
-                  const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
-                  const businessName = ChatbotWidget.config?.business_name || '';
-                  const businessText = businessName ? ` from ${businessName}` : '';
-                  addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
-              }
-              
-              // Display options for current level
-              const currentOptions = getCurrentLevelOptions();
-              for (let i = 0; i < currentOptions.length; i++) {
-                  await delay(250);
-                  const option = currentOptions[i];
-                  addOptionButton(option.id, option.text, option, i);
-              }
-              
-              // Show "type a request" message only at root level
-              if (funnelPath.length === 0) {
-                  await delay(150);
-                  addBotMessage('Or type a request to begin a chat');
-              }
-              
-              // Update back button visibility
-              const backBtn = document.getElementById('fortapura-back-btn');
-              if (backBtn) {
-                  backBtn.style.display = funnelPath.length > 0 ? 'block' : 'none';
-              }
-              
-              if (chatWindow) {
-                  chatWindow.scrollTop = chatWindow.scrollHeight;
-              }
-          }, 600);
-      } else {
-          // Already at root, just hide back button
-          const backBtn = document.getElementById('fortapura-back-btn');
-          if (backBtn) {
-              backBtn.style.display = 'none';
-          }
-      }
-  }
   
   // Check if chat is closed
   function isChatClosed() {
@@ -1321,26 +1255,6 @@
     return ChatbotWidget.config?.welcome_options || [];
   }
   
-  // Get current level options based on funnel path
-  function getCurrentLevelOptions() {
-    const welcomeOptions = getWelcomeOptions();
-    if (funnelPath.length === 0) {
-      return welcomeOptions;
-    }
-    
-    // Navigate through the funnel path to get current level options
-    let currentOptions = welcomeOptions;
-    for (const pathIndex of funnelPath) {
-      const option = currentOptions[pathIndex];
-      if (option && option.children && option.children.length > 0) {
-        currentOptions = option.children;
-      } else {
-        return [];
-      }
-    }
-    return currentOptions;
-  }
-  
   // Show specific section
   async function showSection(sectionId, isFresh = false, isFunnelInitiated = false) {
       currentSection = sectionId;
@@ -1348,15 +1262,11 @@
       const backBtn = document.getElementById('fortapura-back-btn');
 
       if (sectionId === 'welcome') {
-          // Show or hide back button based on funnel depth
           if (backBtn) {
-              backBtn.style.display = funnelPath.length > 0 ? 'block' : 'none';
+              backBtn.style.display = 'none';
           }
-          
           if (isFresh) {
               // Fresh open: clear and build full welcome
-              funnelPath = [];
-              funnelContextAccumulator = [];
               if (chatWindow) {
                   chatWindow.innerHTML = '';
               }
@@ -1368,12 +1278,11 @@
                   const businessName = ChatbotWidget.config?.business_name || '';
                   const businessText = businessName ? ` from ${businessName}` : '';
                   addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
-                  const welcomeOptions = getCurrentLevelOptions();
-                  for (let i = 0; i < welcomeOptions.length; i++) {
+                  const welcomeOptions = getWelcomeOptions();
+                  for (let option of welcomeOptions) {
                       await delay(250);
-                      const option = welcomeOptions[i];
-                      // Pass option index and full option object
-                      addOptionButton(option.id, option.text, option, i);
+                      // Pass funnel_context and initial_response if they exist in the option
+                      addOptionButton(option.id, option.text, option.funnel_context || null, option.initial_response || null);
                   }
                   await delay(150);
                   addBotMessage('Or type a request to begin a chat');
@@ -1382,34 +1291,24 @@
                   }
               }, 800);
           } else {
-              // Back navigation or funnel navigation
+              // Back navigation: remove section response if present
               if (chatWindow) {
                   const sectionMsg = chatWindow.querySelector('.fortapura-section-response');
                   if (sectionMsg) {
                       sectionMsg.remove();
                   }
-                  // Rebuild options for current level
+                  // Rebuild full welcome if no greeting or buttons (since cleared on section nav)
                   if (!chatWindow.querySelector('.fortapura-message') || !chatWindow.querySelector('.fortapura-option-btn')) {
                       const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
                       const businessName = ChatbotWidget.config?.business_name || '';
                       const businessText = businessName ? ` from ${businessName}` : '';
-                      
-                      // Different message based on funnel depth
-                      if (funnelPath.length > 0) {
-                          addBotMessage(`Great! Please select from the options below:`);
-                      } else {
-                          addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
+                      addBotMessage(`Hi there! I'm ${assistantName}, your AI assistant${businessText}. How can I help you today?`);
+                      const welcomeOptions = getWelcomeOptions();
+                      for (let option of welcomeOptions) {
+                          // Pass funnel_context and initial_response if they exist in the option
+                          addOptionButton(option.id, option.text, option.funnel_context || null, option.initial_response || null);
                       }
-                      
-                      const welcomeOptions = getCurrentLevelOptions();
-                      for (let i = 0; i < welcomeOptions.length; i++) {
-                          const option = welcomeOptions[i];
-                          addOptionButton(option.id, option.text, option, i);
-                      }
-                      
-                      if (funnelPath.length === 0) {
-                          addBotMessage('Or type a request to begin a chat');
-                      }
+                      addBotMessage('Or type a request to begin a chat');
                   }
                   chatWindow.scrollTop = chatWindow.scrollHeight;
               }
@@ -1504,8 +1403,8 @@
       return text;
   }
   
-  // Helper to add bot message (with optional section flag)
-  function addBotMessage(text, isSection = false) {
+  // Helper to add bot message (with optional section flag and scrollToTop flag)
+  function addBotMessage(text, isSection = false, scrollToTop = false) {
       const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
@@ -1528,7 +1427,18 @@
           </div>
       `;
       chatWindow.appendChild(botMsg);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+      
+      // If scrollToTop is true, scroll so the first message is at the top of visible window
+      if (scrollToTop) {
+          // Use requestAnimationFrame to ensure DOM is updated before scrolling
+          requestAnimationFrame(() => {
+              const messageTop = botMsg.offsetTop;
+              chatWindow.scrollTop = messageTop;
+          });
+      } else {
+          // Default behavior: scroll to bottom
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
   
       // Attach form listener if the contact form is present in this message
       const form = botMsg.querySelector('.fortapura-contact-form-widget');
@@ -1537,107 +1447,33 @@
       }
   }
   
-  // Helper to add option button (updated for multi-layer funneling)
-  function addOptionButton(sectionId, text, optionObj, optionIndex) {
+  // Helper to add option button
+  function addOptionButton(sectionId, text, funnelContext = null, initialResponse = null) {
       const chatWindow = document.getElementById('fortapura-chat-window');
       if (!chatWindow) return;
       
       const optionBtn = document.createElement('button');
       optionBtn.classList.add('fortapura-option-btn');
       optionBtn.innerHTML = text;
-      
-      // Handle click based on option configuration
+      // Updated onclick: if funnelContext is provided, start AI chat with context
+      // Otherwise, navigate to the specified section
       optionBtn.onclick = () => {
-          // Remove all current option buttons
-          const allButtons = chatWindow.querySelectorAll('.fortapura-option-btn');
-          allButtons.forEach(btn => btn.remove());
-          
-          // Check if option has children (multi-layer funnel)
-          if (optionObj.children && optionObj.children.length > 0) {
-              // Navigate deeper into the funnel
-              funnelPath.push(optionIndex);
+          if (funnelContext) {
+              // Store funnel context for when user sends their first actual message
+              sessionStorage.setItem('chatbot_funnel_context', funnelContext);
               
-              // Accumulate funnel context if provided
-              if (optionObj.funnel_context) {
-                  funnelContextAccumulator.push(optionObj.funnel_context);
+              // Store initial response if provided (custom message to show immediately)
+              if (initialResponse) {
+                  sessionStorage.setItem('chatbot_funnel_initial_response', initialResponse);
               }
               
-              // Show user's selection
-              const userMsg = document.createElement('div');
-              userMsg.classList.add('fortapura-message', 'fortapura-user');
-              userMsg.innerHTML = `<strong>You:</strong> ${text}`;
-              chatWindow.appendChild(userMsg);
-              
-              // Show typing indicator then display child options
-              showTypingIndicator();
-              setTimeout(async () => {
-                  removeTypingIndicator();
-                  await delay(300);
-                  
-                  // Show response message if provided, otherwise generic
-                  const responseMessage = optionObj.response_message || 'Great choice! What would you like to know more about?';
-                  addBotMessage(responseMessage);
-                  
-                  // Display child options
-                  const childOptions = optionObj.children;
-                  for (let i = 0; i < childOptions.length; i++) {
-                      await delay(250);
-                      const childOption = childOptions[i];
-                      addOptionButton(childOption.id, childOption.text, childOption, i);
-                  }
-                  
-                  // Update back button visibility
-                  const backBtn = document.getElementById('fortapura-back-btn');
-                  if (backBtn) {
-                      backBtn.style.display = 'block';
-                  }
-                  
-                  if (chatWindow) {
-                      chatWindow.scrollTop = chatWindow.scrollHeight;
-                  }
-              }, 600);
-          } else if (optionObj.funnel_context || optionObj.initial_response) {
-              // Final option: transition to AI chat with accumulated context
-              let fullContext = '';
-              
-              // Accumulate all contexts from the funnel path
-              if (funnelContextAccumulator.length > 0) {
-                  fullContext = funnelContextAccumulator.join(' > ') + ' > ';
-              }
-              
-              // Add current option's context
-              if (optionObj.funnel_context) {
-                  fullContext += optionObj.funnel_context;
-              }
-              
-              // Store accumulated funnel context
-              if (fullContext) {
-                  sessionStorage.setItem('chatbot_funnel_context', fullContext);
-              }
-              
-              // Store initial response if provided
-              if (optionObj.initial_response) {
-                  sessionStorage.setItem('chatbot_funnel_initial_response', optionObj.initial_response);
-              }
-              
-              // Show user's selection
-              const userMsg = document.createElement('div');
-              userMsg.classList.add('fortapura-message', 'fortapura-user');
-              userMsg.innerHTML = `<strong>You:</strong> ${text}`;
-              chatWindow.appendChild(userMsg);
-              
-              // Reset funnel tracking
-              funnelPath = [];
-              funnelContextAccumulator = [];
-              
-              // Transition to AI chat
-              showSection('ai-chat', false, true);
+              // Transition to AI chat with funnel context
+              showSection('ai-chat', false, true); // Pass true to indicate funnel-initiated
           } else {
-              // Traditional section navigation (fallback)
+              // Traditional section navigation
               showSection(sectionId, false);
           }
       };
-      
       chatWindow.appendChild(optionBtn);
       chatWindow.scrollTop = chatWindow.scrollHeight;
   }
@@ -1734,23 +1570,24 @@
           // Handle multiple replies (array) or fallback to single reply
           const replies = data.replies || (data.reply ? [data.reply] : []);
           
-          // Display each reply as a separate message with a delay between them
+          // Display each reply as a separate message with reduced delays for faster response
           for (let i = 0; i < replies.length; i++) {
               if (i > 0) {
                   // Show typing indicator between messages for natural feel
                   showTypingIndicator();
-                  await delay(800);  // 800ms delay between messages
+                  await delay(300);  // Reduced from 800ms to 300ms for faster response
                   removeTypingIndicator();
-                  await delay(200);  // Small pause after removing typing
+                  await delay(50);  // Reduced from 200ms to 50ms
               }
-              addBotMessage(replies[i]);
-              await delay(300);  // Small delay before next message
+              // Scroll first message to top of visible window, others follow normally
+              addBotMessage(replies[i], false, i === 0 && replies.length > 1);
+              if (i < replies.length - 1) {
+                  await delay(100);  // Reduced from 300ms to 100ms
+              }
           }
           
           hasAIInteraction = true;
-          if (chatWindow) {
-              chatWindow.scrollTop = chatWindow.scrollHeight;
-          }
+          // Don't scroll to bottom after adding messages - first message should stay at top
       })
       .catch(error => {
           removeTypingIndicator();
@@ -1799,75 +1636,86 @@
       // Show typing indicator
       showTypingIndicator();
   
-      // Send to backend with minimal delay for typing effect
-      setTimeout(() => {
-          // Build request body
-          const requestBody = {
-              message: message,
-              session_id: ChatbotWidget.sessionId
-          };
-          
-          // Include demo knowledge base key if available
-          if (ChatbotWidget.config && ChatbotWidget.config.demo_kb_key) {
-              requestBody.demo_kb_key = ChatbotWidget.config.demo_kb_key;
+      // Send to backend immediately for faster response
+      // Build request body
+      const requestBody = {
+          message: message,
+          session_id: ChatbotWidget.sessionId
+      };
+      
+      // Include demo knowledge base key if available
+      if (ChatbotWidget.config && ChatbotWidget.config.demo_kb_key) {
+          requestBody.demo_kb_key = ChatbotWidget.config.demo_kb_key;
+      }
+      
+      // Include funnel context if available (only on first message)
+      const funnelContext = sessionStorage.getItem('chatbot_funnel_context');
+      if (funnelContext) {
+          requestBody.funnel_context = funnelContext;
+          // Clear it after first use so it doesn't apply to subsequent messages
+          sessionStorage.removeItem('chatbot_funnel_context');
+      }
+      
+      fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${ChatbotWidget.apiKey}`
+          },
+          body: JSON.stringify(requestBody)
+      })
+      .then(response => {
+          return response.json().then(json => ({
+              ok: response.ok,
+              data: json
+          }));
+      })
+      .then(async ({ok, data}) => {
+          if (!ok) {
+              throw data;
           }
+          removeTypingIndicator();
           
-          // Include funnel context if available (only on first message)
-          const funnelContext = sessionStorage.getItem('chatbot_funnel_context');
-          if (funnelContext) {
-              requestBody.funnel_context = funnelContext;
-              // Clear it after first use so it doesn't apply to subsequent messages
-              sessionStorage.removeItem('chatbot_funnel_context');
-          }
+          // Handle multiple replies (array) or fallback to single reply
+          const replies = data.replies || (data.reply ? [data.reply] : []);
           
-          fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${ChatbotWidget.apiKey}`
-              },
-              body: JSON.stringify(requestBody)
-          })
-          .then(response => {
-              return response.json().then(json => ({
-                  ok: response.ok,
-                  data: json
-              }));
-          })
-          .then(async ({ok, data}) => {
-              if (!ok) {
-                  throw data;
+          // Display each reply as a separate message with reduced delays for faster response
+          for (let i = 0; i < replies.length; i++) {
+              if (i > 0) {
+                  // Show typing indicator between messages for natural feel
+                  showTypingIndicator();
+                  await delay(300);  // Reduced from 800ms to 300ms for faster response
+                  removeTypingIndicator();
+                  await delay(50);  // Reduced from 200ms to 50ms
               }
-              removeTypingIndicator();
-              
-              // Handle multiple replies (array) or fallback to single reply
-              const replies = data.replies || (data.reply ? [data.reply] : []);
-              
-              // Display each reply as a separate message with a delay between them
-              for (let i = 0; i < replies.length; i++) {
-                  if (i > 0) {
-                      // Show typing indicator between messages for natural feel
-                      showTypingIndicator();
-                      await delay(800);  // 800ms delay between messages
-                      removeTypingIndicator();
-                      await delay(200);  // Small pause after removing typing
+              // Scroll first message to top of visible window, others follow normally
+              addBotMessage(replies[i], false, i === 0 && replies.length > 1);
+              if (i < replies.length - 1) {
+                  await delay(100);  // Reduced delay between messages
+              }
+          }
+          
+          hasAIInteraction = true;
+      })
+      .catch(async (error) => {
+          removeTypingIndicator();
+          // Handle error replies (could also be an array)
+          const errorReplies = error.replies || (error.reply ? [error.reply] : null);
+          if (errorReplies && Array.isArray(errorReplies)) {
+              // Display multiple error messages with first one at top
+              for (let i = 0; i < errorReplies.length; i++) {
+                  addBotMessage(errorReplies[i], false, i === 0 && errorReplies.length > 1);
+                  if (i < errorReplies.length - 1) {
+                      await delay(100);  // Reduced from 300ms to 100ms
                   }
-                  addBotMessage(replies[i]);
               }
-              
-              hasAIInteraction = true;
-          })
-          .catch(error => {
-              removeTypingIndicator();
-              // Handle error replies (could also be an array)
-              const errorReplies = error.replies || (error.reply ? [error.reply] : null);
-              if (errorReplies) {
-                  errorReplies.forEach(reply => addBotMessage(reply));
-              } else {
-                  addBotMessage(error.error || 'Sorry, something went wrong. Please try again.');
-              }
-          });
-      }, 200);  // Reduced delay for faster response
+          } else if (errorReplies) {
+              // Single error reply
+              addBotMessage(errorReplies);
+          } else {
+              addBotMessage(error.error || 'Sorry, something went wrong. Please try again.');
+          }
+      });
   
       if (userInput) {
           userInput.value = '';
@@ -1944,10 +1792,6 @@
       }).catch(error => {
           console.error('Error clearing history:', error);
       });
-      
-      // Reset funnel state
-      funnelPath = [];
-      funnelContextAccumulator = [];
       
       const chatWindow = document.getElementById('fortapura-chat-window');
       if (chatWindow) {
@@ -2120,5 +1964,4 @@
     window.showSection = showSection;
     window.toggleMenu = toggleMenu;
     window.debouncedSendMessage = debouncedSendMessage;
-    window.navigateBack = navigateBack;
   })();
