@@ -1430,11 +1430,24 @@
       
       // If scrollToTop is true, scroll so the first message is at the top of visible window
       if (scrollToTop) {
-          // Use requestAnimationFrame to ensure DOM is updated before scrolling
-          requestAnimationFrame(() => {
-              const messageTop = botMsg.offsetTop;
-              chatWindow.scrollTop = messageTop;
-          });
+          // Use setTimeout with multiple checks to ensure reliable scrolling
+          setTimeout(() => {
+              // Method 1: Try using getBoundingClientRect for more accurate positioning
+              const chatRect = chatWindow.getBoundingClientRect();
+              const msgRect = botMsg.getBoundingClientRect();
+              const relativeTop = msgRect.top - chatRect.top + chatWindow.scrollTop;
+              
+              // Scroll to position the message at the top, with small offset for padding
+              chatWindow.scrollTop = Math.max(0, relativeTop - 20);
+              
+              // Fallback: If the above doesn't work, try offsetTop after a brief delay
+              setTimeout(() => {
+                  const messageTop = botMsg.offsetTop;
+                  if (Math.abs(chatWindow.scrollTop - (messageTop - 20)) > 10) {
+                      chatWindow.scrollTop = Math.max(0, messageTop - 20);
+                  }
+              }, 50);
+          }, 100); // Initial delay to ensure message is fully rendered
       } else {
           // Default behavior: scroll to bottom
           chatWindow.scrollTop = chatWindow.scrollHeight;
