@@ -9,16 +9,6 @@
         this.apiEndpoint = options.apiEndpoint || 'https://chatbot-cloud-backend.onrender.com/v1';
         this.sessionId = this.generateSessionId();
         
-        // Store demo parameters if provided
-        this.demoParams = {
-          primaryColor: options.primaryColor || null,
-          secondaryColor: options.secondaryColor || null,
-          businessName: options.businessName || null,
-          assistantName: options.assistant_name || options.botName || null,
-          assistantAvatarUrl: options.assistant_avatar_url || options.botAvatar || null,
-          knowledgeBase: options.knowledgeBase || null
-        };
-        
         // Fetch client configuration with error handling
         this.fetchConfig().then(() => {
           this.injectStyles();
@@ -48,40 +38,13 @@
       },
   
       fetchConfig: async function() {
-        // Build request body with demo parameters if provided
-        const requestBody = {};
-        if (this.demoParams.primaryColor) {
-          requestBody.primary_color = this.demoParams.primaryColor;
-        }
-        if (this.demoParams.secondaryColor) {
-          requestBody.secondary_color = this.demoParams.secondaryColor;
-        }
-        if (this.demoParams.businessName) {
-          requestBody.business_name = this.demoParams.businessName;
-        }
-        if (this.demoParams.assistantName) {
-          requestBody.assistant_name = this.demoParams.assistantName;
-        }
-        if (this.demoParams.assistantAvatarUrl) {
-          requestBody.assistant_avatar_url = this.demoParams.assistantAvatarUrl;
-        }
-        if (this.demoParams.knowledgeBase) {
-          requestBody.knowledge_base = this.demoParams.knowledgeBase;
-        }
-        
-        const fetchOptions = {
-          method: Object.keys(requestBody).length > 0 ? 'POST' : 'GET',
+        const response = await fetch(`${this.apiEndpoint}/config`, {
+          method: 'GET',
           headers: {
             'Authorization': `Bearer ${this.apiKey}`,
             'Content-Type': 'application/json'
           }
-        };
-        
-        if (Object.keys(requestBody).length > 0) {
-          fetchOptions.body = JSON.stringify(requestBody);
-        }
-        
-        const response = await fetch(`${this.apiEndpoint}/config`, fetchOptions);
+        });
         this.config = await response.json();
       },
   
@@ -1043,27 +1006,29 @@
           }
   });
   
-  // Enhanced: Smooth scroll to bottom after adding messages
-  function scrollToBottom() {
-      const chatWindow = document.getElementById('fortapura-chat-window');
-      chatWindow.scrollTo({
-          top: chatWindow.scrollHeight,
-          behavior: 'smooth'
-      });
-  }
-  
-  // Override addBotMessage and addOptionButton to use smooth scroll
-  const originalAddBotMessage = window.addBotMessage;
-  window.addBotMessage = function(text, isSection = false) {
-      originalAddBotMessage(text, isSection);
-      setTimeout(scrollToBottom, 100); // Slight delay for smooth effect
-  };
-  
-  const originalAddOptionButton = window.addOptionButton;
-  window.addOptionButton = function(sectionId, text, funnelContext = null, initialResponse = null) {
-      originalAddOptionButton(sectionId, text, funnelContext, initialResponse);
-      setTimeout(scrollToBottom, 100);
-  };
+// Enhanced: Smooth scroll to bottom after adding messages
+function scrollToBottom() {
+    const chatWindow = document.getElementById('fortapura-chat-window');
+    chatWindow.scrollTo({
+        top: chatWindow.scrollHeight,
+        behavior: 'smooth'
+    });
+}
+
+// Override addBotMessage and addOptionButton to use smooth scroll
+// Note: Don't override addBotMessage anymore - it handles its own scrolling logic
+// const originalAddBotMessage = window.addBotMessage;
+// window.addBotMessage = function(text, isSection = false) {
+//     originalAddBotMessage(text, isSection);
+//     setTimeout(scrollToBottom, 100); // Slight delay for smooth effect
+// };
+
+// Removed override - no automated scrolling
+// const originalAddOptionButton = window.addOptionButton;
+// window.addOptionButton = function(sectionId, text, funnelContext = null, initialResponse = null) {
+//     originalAddOptionButton(sectionId, text, funnelContext, initialResponse);
+//     setTimeout(scrollToBottom, 100);
+// };
   
   // Enhanced typing indicator with fade
   const originalShowTypingIndicator = window.showTypingIndicator;
@@ -1075,7 +1040,7 @@
           typing.style.transition = 'opacity 0.3s ease';
           setTimeout(() => typing.style.opacity = '1', 10);
       }
-      scrollToBottom();
+      // Don't scroll to bottom - let message handling control scroll position
   };
   
   // Check if chat is closed
@@ -1286,9 +1251,7 @@
                   }
                   await delay(150);
                   addBotMessage('Or type a request to begin a chat');
-                  if (chatWindow) {
-                      chatWindow.scrollTop = chatWindow.scrollHeight;
-                  }
+                  // NO AUTOMATED SCROLLING
               }, 800);
           } else {
               // Back navigation: remove section response if present
@@ -1310,7 +1273,7 @@
                       }
                       addBotMessage('Or type a request to begin a chat');
                   }
-                  chatWindow.scrollTop = chatWindow.scrollHeight;
+                  // NO AUTOMATED SCROLLING
               }
           }
       } else if (sectionId === 'ai-chat') {
@@ -1347,9 +1310,7 @@
           if (backBtn) {
               backBtn.style.display = 'none';
           }
-          if (chatWindow) {
-              chatWindow.scrollTop = chatWindow.scrollHeight;
-          }
+          // NO AUTOMATED SCROLLING
       } else if (sectionId === 'report-issue') {
           // Clear window to "open new space"
           if (chatWindow) {
@@ -1368,9 +1329,7 @@
           if (backBtn) {
               backBtn.style.display = 'block';
           }
-          if (chatWindow) {
-              chatWindow.scrollTop = chatWindow.scrollHeight;
-          }
+          // NO AUTOMATED SCROLLING
     } else if (sectionId === 'find-out-more') {
         // Handle "Find Out More" - Open about page in new tab
         window.open('https://www.fortapura.com/about', '_blank');
@@ -1386,9 +1345,7 @@
           if (backBtn) {
               backBtn.style.display = 'block';
           }
-          if (chatWindow) {
-              chatWindow.scrollTop = chatWindow.scrollHeight;
-          }
+          // NO AUTOMATED SCROLLING
       }
   }
   
@@ -1426,32 +1383,15 @@
               ${processedText}
           </div>
       `;
-      chatWindow.appendChild(botMsg);
       
-      // If scrollToTop is true, scroll so the first message is at the top of visible window
-      if (scrollToTop) {
-          // Use setTimeout with multiple checks to ensure reliable scrolling
-          setTimeout(() => {
-              // Method 1: Try using getBoundingClientRect for more accurate positioning
-              const chatRect = chatWindow.getBoundingClientRect();
-              const msgRect = botMsg.getBoundingClientRect();
-              const relativeTop = msgRect.top - chatRect.top + chatWindow.scrollTop;
-              
-              // Scroll to position the message at the top, with small offset for padding
-              chatWindow.scrollTop = Math.max(0, relativeTop - 20);
-              
-              // Fallback: If the above doesn't work, try offsetTop after a brief delay
-              setTimeout(() => {
-                  const messageTop = botMsg.offsetTop;
-                  if (Math.abs(chatWindow.scrollTop - (messageTop - 20)) > 10) {
-                      chatWindow.scrollTop = Math.max(0, messageTop - 20);
-                  }
-              }, 50);
-          }, 100); // Initial delay to ensure message is fully rendered
-      } else {
-          // Default behavior: scroll to bottom
-          chatWindow.scrollTop = chatWindow.scrollHeight;
-      }
+    // Add message without any scrolling
+    const typingIndicator = document.getElementById('fortapura-typing-indicator');
+    if (typingIndicator) {
+        chatWindow.insertBefore(botMsg, typingIndicator);
+    } else {
+        chatWindow.appendChild(botMsg);
+    }
+    // NO AUTOMATED SCROLLING - user controls scroll position manually
   
       // Attach form listener if the contact form is present in this message
       const form = botMsg.querySelector('.fortapura-contact-form-widget');
@@ -1488,26 +1428,26 @@
           }
       };
       chatWindow.appendChild(optionBtn);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+      // NO AUTOMATED SCROLLING
   }
   
-  // Show typing indicator
-  function showTypingIndicator() {
-      const chatWindow = document.getElementById('fortapura-chat-window');
-      if (!chatWindow) return;
-      
-      const typing = document.createElement('div');
-      typing.id = 'fortapura-typing-indicator';
-      typing.classList.add('fortapura-typing-indicator');
-      const assistantAvatar = ChatbotWidget.config?.assistant_avatar_url || '/static/alex-profile.png';
-      const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
-      typing.innerHTML = `
-          <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="fortapura-profile-img">
-          <span></span><span></span><span></span>
-      `;
-      chatWindow.appendChild(typing);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-  }
+// Show typing indicator
+function showTypingIndicator() {
+    const chatWindow = document.getElementById('fortapura-chat-window');
+    if (!chatWindow) return;
+    
+    const typing = document.createElement('div');
+    typing.id = 'fortapura-typing-indicator';
+    typing.classList.add('fortapura-typing-indicator');
+    const assistantAvatar = ChatbotWidget.config?.assistant_avatar_url || '/static/alex-profile.png';
+    const assistantName = ChatbotWidget.config?.assistant_name || 'Alex';
+    typing.innerHTML = `
+        <img src="${assistantAvatar}" alt="${assistantName} Profile Picture" class="fortapura-profile-img">
+        <span></span><span></span><span></span>
+    `;
+    chatWindow.appendChild(typing);
+    // Don't scroll to bottom here - let message handling control scroll position
+}
   
   // Remove typing indicator
   function removeTypingIndicator() {
@@ -1547,11 +1487,6 @@
           session_id: ChatbotWidget.sessionId
       };
       
-      // Include demo knowledge base key if available
-      if (ChatbotWidget.config && ChatbotWidget.config.demo_kb_key) {
-          requestBody.demo_kb_key = ChatbotWidget.config.demo_kb_key;
-      }
-      
       // Include funnel context (should be in sessionStorage)
       const funnelContext = sessionStorage.getItem('chatbot_funnel_context');
       if (funnelContext) {
@@ -1560,6 +1495,7 @@
           sessionStorage.removeItem('chatbot_funnel_context');
       }
       
+      // STREAMING RESPONSE - Process messages as they arrive
       fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
           method: 'POST',
           headers: {
@@ -1568,76 +1504,96 @@
           },
           body: JSON.stringify(requestBody)
       })
-      .then(response => {
-          return response.json().then(json => ({
-              ok: response.ok,
-              data: json
-          }));
-      })
-      .then(async ({ok, data}) => {
-          if (!ok) {
-              throw data;
+      .then(async response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
           }
-          removeTypingIndicator();
           
-          // Handle multiple replies (array) or fallback to single reply
-          const replies = data.replies || (data.reply ? [data.reply] : []);
+          // Keep typing indicator visible throughout the entire response
+          // It will only be removed when all messages are complete
           
-          // Display each reply as a separate message
-          // First message: no delay, subsequent messages: small delay
+          // Track messages for scrolling
           let firstMessageElement = null;
-          for (let i = 0; i < replies.length; i++) {
-              if (i > 0) {
-                  // Show typing indicator between messages for natural feel
-                  showTypingIndicator();
-                  await delay(300);  // Small delay between messages
-                  removeTypingIndicator();
-                  await delay(50);  // Small pause after removing typing
+          let messageCount = 0;
+          const chatWindow = document.getElementById('fortapura-chat-window');
+          
+          // Read the streaming response
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          
+          while (true) {
+              const {done, value} = await reader.read();
+              
+              if (done) {
+                  break;
               }
-              // Add message and store reference to first one
-              const chatWindow = document.getElementById('fortapura-chat-window');
-              if (chatWindow && i === 0) {
-                  // Store current number of bot messages before adding
-                  const beforeCount = chatWindow.querySelectorAll('.fortapura-bot').length;
-                  addBotMessage(replies[i], false, false);
-                  // Get the first message we just added
-                  await delay(10);  // Tiny delay to ensure DOM update
-                  const botMessages = chatWindow.querySelectorAll('.fortapura-bot');
-                  if (botMessages.length > beforeCount) {
-                      firstMessageElement = botMessages[beforeCount];
+              
+              // Decode the chunk and add to buffer
+              buffer += decoder.decode(value, {stream: true});
+              
+              // Process complete SSE messages (separated by \n\n)
+              const lines = buffer.split('\n\n');
+              
+              // Keep the last incomplete line in buffer
+              buffer = lines.pop() || '';
+              
+              // Process each complete SSE message
+              for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                      try {
+                          const jsonData = JSON.parse(line.substring(6));
+                          
+                        if (jsonData.done) {
+                            // Stream complete - NOW remove typing indicator
+                            removeTypingIndicator();
+                            hasAIInteraction = true;
+                            // NO AUTOMATED SCROLLING
+                        } else if (jsonData.message) {
+                              // New message paragraph arrived
+                              messageCount++;
+                              
+                              // Keep typing indicator visible (don't remove between messages)
+                              // Just add a small delay between messages for natural pacing
+                              if (messageCount > 1) {
+                                  await delay(300);
+                              }
+                              
+                            // Store reference to first message
+                            if (chatWindow && messageCount === 1) {
+                                const beforeCount = chatWindow.querySelectorAll('.fortapura-bot').length;
+                                addBotMessage(jsonData.message, false, false); // NO SCROLLING
+                                await delay(10);
+                                const botMessages = chatWindow.querySelectorAll('.fortapura-bot');
+                                if (botMessages.length > beforeCount) {
+                                    firstMessageElement = botMessages[beforeCount];
+                                }
+                            } else {
+                                addBotMessage(jsonData.message, false, false);
+                            }
+                              
+                              // Small delay after adding message
+                              if (messageCount > 1) {
+                                  await delay(150);
+                              }
+                          } else if (jsonData.error) {
+                              // Error in stream - remove typing indicator
+                              removeTypingIndicator();
+                              addBotMessage(jsonData.error || 'Sorry, something went wrong.');
+                          }
+                      } catch (e) {
+                          console.error('Error parsing SSE message:', e);
+                      }
                   }
-              } else {
-                  addBotMessage(replies[i], false, false);
-              }
-              // Small delay after adding message (except for first message)
-              if (i > 0 && i < replies.length - 1) {
-                  await delay(100);
               }
           }
-          
-          // After all messages are added, scroll first message to top if multiple messages
-          if (replies.length > 1 && firstMessageElement) {
-              await delay(50);  // Small delay to ensure all messages are rendered
-              const chatWindow = document.getElementById('fortapura-chat-window');
-              if (chatWindow && firstMessageElement) {
-                  // Use getBoundingClientRect for accurate positioning
-                  const chatRect = chatWindow.getBoundingClientRect();
-                  const msgRect = firstMessageElement.getBoundingClientRect();
-                  const relativeTop = msgRect.top - chatRect.top + chatWindow.scrollTop;
-                  chatWindow.scrollTop = Math.max(0, relativeTop - 20);
-              }
-          }
-          
-          hasAIInteraction = true;
       })
       .catch(error => {
-          removeTypingIndicator();
-          console.error('Chat error:', error);
-          const errorMessage = error?.error || 'Sorry, something went wrong. Please try again.';
-          addBotMessage(errorMessage);
-          if (chatWindow) {
-              chatWindow.scrollTop = chatWindow.scrollHeight;
-          }
+        removeTypingIndicator();
+        console.error('Chat error:', error);
+        const errorMessage = error?.error || 'Sorry, something went wrong. Please try again.';
+        addBotMessage(errorMessage);
+        // NO AUTOMATED SCROLLING
       });
   }
   
@@ -1664,18 +1620,18 @@
           showSection('ai-chat');
       }
   
-      // Add user message
-      const chatWindow = document.getElementById('fortapura-chat-window');
-      if (!chatWindow) return;
-      
-      const userMsg = document.createElement('div');
-      userMsg.classList.add('fortapura-message', 'fortapura-user');
-      userMsg.innerHTML = `<strong>You:</strong> ${message}`;
-      chatWindow.appendChild(userMsg);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-  
-      // Show typing indicator
-      showTypingIndicator();
+    // Add user message
+    const chatWindow = document.getElementById('fortapura-chat-window');
+    if (!chatWindow) return;
+    
+    const userMsg = document.createElement('div');
+    userMsg.classList.add('fortapura-message', 'fortapura-user');
+    userMsg.innerHTML = `<strong>You:</strong> ${message}`;
+    chatWindow.appendChild(userMsg);
+    // NO AUTOMATED SCROLLING
+
+    // Show typing indicator
+    showTypingIndicator();
   
       // Send to backend immediately for faster response
       // Build request body
@@ -1683,11 +1639,6 @@
           message: message,
           session_id: ChatbotWidget.sessionId
       };
-      
-      // Include demo knowledge base key if available
-      if (ChatbotWidget.config && ChatbotWidget.config.demo_kb_key) {
-          requestBody.demo_kb_key = ChatbotWidget.config.demo_kb_key;
-      }
       
       // Include funnel context if available (only on first message)
       const funnelContext = sessionStorage.getItem('chatbot_funnel_context');
@@ -1697,6 +1648,7 @@
           sessionStorage.removeItem('chatbot_funnel_context');
       }
       
+      // STREAMING RESPONSE - Process messages as they arrive
       fetch(`${ChatbotWidget.apiEndpoint}/chat`, {
           method: 'POST',
           headers: {
@@ -1705,86 +1657,94 @@
           },
           body: JSON.stringify(requestBody)
       })
-      .then(response => {
-          return response.json().then(json => ({
-              ok: response.ok,
-              data: json
-          }));
-      })
-      .then(async ({ok, data}) => {
-          if (!ok) {
-              throw data;
+      .then(async response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
           }
-          removeTypingIndicator();
           
-          // Handle multiple replies (array) or fallback to single reply
-          const replies = data.replies || (data.reply ? [data.reply] : []);
+          // Keep typing indicator visible throughout the entire response
+          // It will only be removed when all messages are complete
           
-          // Display each reply as a separate message
-          // First message: no delay, subsequent messages: small delay
+          // Track messages for scrolling
           let firstMessageElement = null;
-          for (let i = 0; i < replies.length; i++) {
-              if (i > 0) {
-                  // Show typing indicator between messages for natural feel
-                  showTypingIndicator();
-                  await delay(300);  // Small delay between messages
-                  removeTypingIndicator();
-                  await delay(50);  // Small pause after removing typing
+          let messageCount = 0;
+          const chatWindow = document.getElementById('fortapura-chat-window');
+          
+          // Read the streaming response
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          
+          while (true) {
+              const {done, value} = await reader.read();
+              
+              if (done) {
+                  break;
               }
-              // Add message and store reference to first one
-              const chatWindow = document.getElementById('fortapura-chat-window');
-              if (chatWindow && i === 0) {
-                  // Store current number of bot messages before adding
-                  const beforeCount = chatWindow.querySelectorAll('.fortapura-bot').length;
-                  addBotMessage(replies[i], false, false);
-                  // Get the first message we just added
-                  await delay(10);  // Tiny delay to ensure DOM update
-                  const botMessages = chatWindow.querySelectorAll('.fortapura-bot');
-                  if (botMessages.length > beforeCount) {
-                      firstMessageElement = botMessages[beforeCount];
+              
+              // Decode the chunk and add to buffer
+              buffer += decoder.decode(value, {stream: true});
+              
+              // Process complete SSE messages (separated by \n\n)
+              const lines = buffer.split('\n\n');
+              
+              // Keep the last incomplete line in buffer
+              buffer = lines.pop() || '';
+              
+              // Process each complete SSE message
+              for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                      try {
+                          const jsonData = JSON.parse(line.substring(6));
+                          
+                        if (jsonData.done) {
+                            // Stream complete - NOW remove typing indicator
+                            removeTypingIndicator();
+                            hasAIInteraction = true;
+                            // NO AUTOMATED SCROLLING
+                        } else if (jsonData.message) {
+                              // New message paragraph arrived
+                              messageCount++;
+                              
+                              // Keep typing indicator visible (don't remove between messages)
+                              // Just add a small delay between messages for natural pacing
+                              if (messageCount > 1) {
+                                  await delay(300);
+                              }
+                              
+                            // Store reference to first message
+                            if (chatWindow && messageCount === 1) {
+                                const beforeCount = chatWindow.querySelectorAll('.fortapura-bot').length;
+                                addBotMessage(jsonData.message, false, false); // NO SCROLLING
+                                await delay(10);
+                                const botMessages = chatWindow.querySelectorAll('.fortapura-bot');
+                                if (botMessages.length > beforeCount) {
+                                    firstMessageElement = botMessages[beforeCount];
+                                }
+                            } else {
+                                addBotMessage(jsonData.message, false, false);
+                            }
+                              
+                              // Small delay after adding message
+                              if (messageCount > 1) {
+                                  await delay(150);
+                              }
+                          } else if (jsonData.error) {
+                              // Error in stream - remove typing indicator
+                              removeTypingIndicator();
+                              addBotMessage(jsonData.error || 'Sorry, something went wrong.');
+                          }
+                      } catch (e) {
+                          console.error('Error parsing SSE message:', e);
+                      }
                   }
-              } else {
-                  addBotMessage(replies[i], false, false);
-              }
-              // Small delay after adding message (except for first message)
-              if (i > 0 && i < replies.length - 1) {
-                  await delay(100);
               }
           }
-          
-          // After all messages are added, scroll first message to top if multiple messages
-          if (replies.length > 1 && firstMessageElement) {
-              await delay(50);  // Small delay to ensure all messages are rendered
-              const chatWindow = document.getElementById('fortapura-chat-window');
-              if (chatWindow && firstMessageElement) {
-                  // Use getBoundingClientRect for accurate positioning
-                  const chatRect = chatWindow.getBoundingClientRect();
-                  const msgRect = firstMessageElement.getBoundingClientRect();
-                  const relativeTop = msgRect.top - chatRect.top + chatWindow.scrollTop;
-                  chatWindow.scrollTop = Math.max(0, relativeTop - 20);
-              }
-          }
-          
-          hasAIInteraction = true;
-          })
-          .catch(async (error) => {
+      })
+      .catch(async (error) => {
+          console.error('Streaming error:', error);
           removeTypingIndicator();
-          // Handle error replies (could also be an array)
-          const errorReplies = error.replies || (error.reply ? [error.reply] : null);
-          if (errorReplies && Array.isArray(errorReplies)) {
-              // Display multiple error messages with first one at top
-              for (let i = 0; i < errorReplies.length; i++) {
-                  addBotMessage(errorReplies[i], false, i === 0 && errorReplies.length > 1);
-                  if (i < errorReplies.length - 1) {
-                      await delay(100);  // Reduced from 300ms to 100ms
-                  }
-              }
-          } else if (errorReplies) {
-              // Single error reply
-              addBotMessage(errorReplies);
-          } else {
-              addBotMessage(error.error || 'Sorry, something went wrong. Please try again.');
-          }
+          addBotMessage('Sorry, something went wrong. Please try again.');
       });
   
       if (userInput) {
